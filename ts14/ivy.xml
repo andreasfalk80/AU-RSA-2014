@@ -1,0 +1,16 @@
+<ivy-module version="2.0">
+  <info organisation="cs.rsa" module="ts14">
+    <license name="Apache" 
+	     url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+    <ivyauthor name="Henrik Baerbak Christensen" />
+    <description>
+      TS14 is the mandatory project in the Reliable Software and
+      Architecture fagpakke.
+    </description>
+  </info>
+  
+  <dependencies>
+    <dependency org="junit" name="junit" rev="4.11"/>
+    <dependency org="commons-io" name="commons-io" rev="2.4"/>
+  </dependencies>
+</ivy-module>

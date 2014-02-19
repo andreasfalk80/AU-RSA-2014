@@ -1,0 +1,86 @@
+# Timesag system for NN 2013
+	
+# ===================================== Karakteristika for år
+HoursOvertime = 502.2
+Year = 2013
+
+# ============================================================
+
+Week 1 :	3	:	0
+
+Wed    		Ca				8.00
+	adm		-		1
+	sa		exam		3	forb question
+
+	sa		exam		1
+
+	sa		exam		2
+Thu		No		
+	syg		-		4.5
+	sa		exam		3
+Fri		Ho				8-
+	sa		exam		1
+	n4c		-		1
+	itevmd		-		1
+	mtt		-		1
+
+	mtt		plan		2
+	saip		plan		1.5
+
+
+Week 2 :	5	:	0
+
+Mon		Ca				8.00-
+	sa		exam		4
+	
+	sa		exam		2
+
+	adm		-		1
+Tue		Ca				8.30
+	sa		exam		3.5
+	
+	sa		exam		2.5
+	adm		-		0.5
+	itevmd		-		0.5
+
+Wed		Ca				8.00
+	adm		-		0.5
+	sa		exam		3.5
+
+	sa		exam		3
+	itevmd		-		0.5
+	
+Thu		Ca				8.00
+	adm		-		0.5
+	sa		exam		3.5
+
+	sa		exam		4
+	
+Fri		Ca				8.00-16.30
+	adm		-		0.5
+	censor		-		0.5
+	n4c		e2e		3
+
+	sa		protokol	2
+	saip		-		0.5
+	itevmd		-		0.5
+	sa		social		1.5
+
+Sat		No
+	sa		hotciv		1	rette hotciv kode til
+
+	es		litt		1.5
+
+Week 3 :	5	:	0
+
+Mon		Ca				8.30-15.30
+	adm		-		0.5
+	es		-		0.5
+	sa		-		1
+	adm		-		1.5
+
+	book2		errata		1
+	es		-		2.5
+
+
+	terna		course		1.5
