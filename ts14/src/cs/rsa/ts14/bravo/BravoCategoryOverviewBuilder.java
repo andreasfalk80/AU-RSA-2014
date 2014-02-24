@@ -61,6 +61,12 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
     workCategoryToHoursMap.put("terna", 0.0);
     workCategoryToHoursMap.put("itevmd", 0.0);
     workCategoryToHoursMap.put("adm", 0.0);
+
+    // Initialize all work classes
+    for(ClassType classType : ClassType.values())
+    {
+      workClassToHoursMap.put(classType, 0.0);
+    }
   }
 
   @Override
@@ -107,6 +113,8 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   @Override
   public void buildEnd() {
     StringBuilder resultStringBuilder = new StringBuilder();
+
+    // The percentace calculations are apparently done without calculating the cosultancy hours
     double totalWorkHoursWithoutConsultancy = totalWorkHours-workClassToHoursMap.get(ClassType.CONSULENT);
 
     // Build result, first append header to result
@@ -135,8 +143,8 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
         if(ClassMap.mapCategoryToClass(entry.getKey()) == classType) {
           // Append work category line to result
           resultStringBuilder.append(String.format("    %-9s:    %4.1f\n",
-                                                 entry.getKey(),
-                                                 entry.getValue()));
+                                                   entry.getKey(),
+                                                   entry.getValue()));
         }
       }
     }
