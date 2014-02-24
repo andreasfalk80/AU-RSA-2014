@@ -21,6 +21,7 @@ import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
 import static org.junit.Assert.*; 
+import cs.rsa.ts14.bravo.BravoLineTypeClassifierStrategy;
 
 /** JUnit learning tests. 
  * 
@@ -60,7 +61,8 @@ public class TestTimesag {
     // As builder, we use a partial implementation
     //
     builder = new SpyWorkloadBuilder();
-    classifier = new FaultyLineTypeClassifierStrategy();
+    //classifier = new FaultyLineTypeClassifierStrategy();
+    classifier = new BravoLineTypeClassifierStrategy();
     sequenceState = new LineSequenceStateStub();
     // Configure the standard TS14 line processor
     processor = 
