@@ -34,8 +34,8 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 
 	public BravoLineTypeClassifierStrategy() {
 		lines = new ArrayList<LineMatch>();
-		// Sjovt at når det kodes pattern, så er det match et tegn adgangen, så
-		// her er der ikke tale om kode for at håndtere en range!!! giver flere
+		// Sjovt at nÃ¥r det kodes pattern, sÃ¥ er det match et tegn adgangen, sÃ¥
+		// her er der ikke tale om kode for at hÃ¥ndtere en range!!! giver flere
 		// tests
 		
 		//match for Week specification line:  Week 1 :	3	:	0 
@@ -48,7 +48,7 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 		lines.add(new LineMatch("(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+(Bi|Ca|Pu|Tr|No|Ho).*", LineType.WEEKDAY_SPECIFICATION));
 		
 		//match for Weekday Work specification line: censor	-		7.5
-		lines.add(new LineMatch("\\s+\\D\\w*\\s+-\\s+[0-9](\\.[05])?", LineType.WORK_SPECIFICATION));
+		lines.add(new LineMatch("\\s+\\D\\w*\\s+(-|\\D\\w*)\\s+[0-9](\\.[05])?.*", LineType.WORK_SPECIFICATION));
 		
 		//match for Comment: # dette er en kommentar
 		lines.add(new LineMatch("#.*", LineType.COMMENT_LINE));
@@ -59,6 +59,8 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 
 	@Override
 	public LineType classify(String line) {
+		
+		//System.out.printf("classifying %s\n", line);
 		lastSeen = LineType.INVALID_LINE;
 		for (Iterator<LineMatch> iterator = lines.iterator(); iterator.hasNext();) {
 			LineMatch lm = iterator.next();
@@ -73,7 +75,7 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 	@Override
 	public String lastError() {
 		if (lastSeen == LineType.INVALID_LINE)
-			return "Invalid weekday: Fre";
+			return "Error: last line was invalid";
 		return "No error";
 	}
 
