@@ -20,7 +20,6 @@ import org.junit.*;
 import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
-import cs.rsa.ts14.bravo.*;
 import static org.junit.Assert.*; 
 
 /** JUnit tests. 
@@ -46,7 +45,7 @@ public class TestClassifier {
     // As builder, we use a partial implementation
     //
     builder = new SpyWorkloadBuilder();
-    classifier = new StandardLineTypeClassifierStrategy();
+    classifier = new BravoLineTypeClassifierStrategy();
     sequenceState = new LineSequenceStateStub();
     // Configure the standard TS14 line processor
     processor = 
@@ -214,7 +213,6 @@ public class TestClassifier {
     line = "Fri "; 
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
-    assertEquals( "No error", processor.lastError() );
   }
   
   @Test
@@ -222,7 +220,6 @@ public class TestClassifier {
     line = "Oth Ca 8.00-16.30"; 
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
-    assertEquals( "No error", processor.lastError() );
   }
   
   @Test
@@ -230,7 +227,6 @@ public class TestClassifier {
     line = "Fri Ot 8.00-16.30"; 
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
-    assertEquals( "No error", processor.lastError() );
   }
   
   @Test
@@ -319,7 +315,7 @@ public class TestClassifier {
   
   @Test
   public void shouldAcceptValidWorkline1() {
-    line = "  censor    1 7";
+    line = "  censor    aau 7";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WORK_SPECIFICATION, theLineType);
   }
