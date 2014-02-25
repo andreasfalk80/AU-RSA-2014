@@ -15,12 +15,21 @@
  */ 
 package cs.rsa.ts14;
 
-import org.junit.*; 
+import static org.junit.Assert.assertEquals;
 
-import cs.rsa.ts14.doubles.*;
-import cs.rsa.ts14.framework.*;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
+import cs.rsa.ts14.bravo.BravoLineTypeClassifierStrategy;
+import cs.rsa.ts14.doubles.LineSequenceStateStub;
+import cs.rsa.ts14.doubles.SpyWorkloadBuilder;
+import cs.rsa.ts14.framework.ClassType;
+import cs.rsa.ts14.framework.LineSequenceState;
+import cs.rsa.ts14.framework.LineType;
+import cs.rsa.ts14.framework.LineTypeClassifierStrategy;
+import cs.rsa.ts14.framework.TimesagLineProcessor;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
-import static org.junit.Assert.*; 
 
 /** JUnit learning tests. 
  * 
@@ -60,14 +69,15 @@ public class TestTimesag {
     // As builder, we use a partial implementation
     //
     builder = new SpyWorkloadBuilder();
-    classifier = new FaultyLineTypeClassifierStrategy();
+    //classifier = new FaultyLineTypeClassifierStrategy();
+    classifier = new BravoLineTypeClassifierStrategy();
     sequenceState = new LineSequenceStateStub();
     // Configure the standard TS14 line processor
     processor = 
         new StandardTimesagLineProcessor( classifier, builder, sequenceState );
   }
   
-  @Test
+  @Test 
   public void shouldAcceptEmptyLine() {
     line = "   ";
     LineType theLineType = processor.process(line);
@@ -81,7 +91,7 @@ public class TestTimesag {
     assertEquals(LineType.COMMENT_LINE, theLineType);
   }
   
-  @Test
+  @Test 
   public void shouldAcceptAssignmentLine() {
     line = "HoursOvertime = 390.2";
     assertEquals(-999.9, builder.getValueOfLastAssignment(), 0.001);
@@ -92,19 +102,19 @@ public class TestTimesag {
 
   @Test
   public void shouldAcceptValidWeekline() {
-    line = "Week 2 :  5 : 0";
+    line = "Week 45 :  5 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
   }
  
-  @Test
+  @Test 
   public void shouldAcceptValidWorkline() {
-    line = "  n4c   -   2";
+    line = "  n4c   -   2.5";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WORK_SPECIFICATION, theLineType);
   }
 
-  @Test
+  @Test 
   public void shouldAcceptValidWeekdayline() {
     line = "Fri    Bi        8.30-16.30"; 
     LineType theLineType = processor.process(line);
@@ -112,7 +122,7 @@ public class TestTimesag {
     assertEquals( "No error", processor.lastError() );
   }
   
-  @Test
+  @Test @Ignore
   public void shouldAccumulate8HoursInWeek2() {
     processWeek2With8HoursWorkOnTaskN4C(); 
     
@@ -121,7 +131,7 @@ public class TestTimesag {
     assertEquals( 8.0, builder.getWeekData().hoursWorked, 0.001);
   }
   
-  @Test
+  @Test @Ignore
   public void shouldGenerateReportForWeek2() {
     processWeek2With8HoursWorkOnTaskN4C();
     processor.endProcess();
@@ -141,7 +151,7 @@ public class TestTimesag {
     processor.process(line);
   }
   
-  @Test
+  @Test @Ignore
   public void shouldClassifyIntoClasses() {
     line = "  n4c   -   2";
     processor.process(line);
