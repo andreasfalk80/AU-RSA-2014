@@ -38,8 +38,8 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 	private static String weekdaysShortPattern = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"; 
 	//matcher ord der starter med et bogstav, og derefter kan indeholde hvad som helst 
 	private static String wordsStartingWithLetterPattern = lettersPattern+"\\w*"; 
-	//matcher  0-24 i intervaller på 0.5. Eksempler: 0 , 0.0 , 1.5 , 5.0 , 5 , 23.5 , 24 , 24.0
-	private static String everyHalfHourInADayPattern = "(1?[0-9]|2[0-3])(\\.[05])?|24(\\.0)?"; 
+	//matcher  0-24 i intervaller på 0.5. mind 0.5 maks 24 Eksempler: , 0.5 , 1.5 , 5.0 , 5 , 23.5 , 24 , 24.0
+	private static String everyHalfHourInADayPattern = "((0\\.5)|(([1-9]|1[0-9]|2[0-3])(\\.[05])?)|(24(\\.[0])?))"; 
 	
 	
 	LineType lastSeen;
