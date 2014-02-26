@@ -148,77 +148,20 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildWorkSpecification("invalid", "-", 1);
 		builder.buildEnd();
 		//System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",buildTokenArray(builder.getResult(),"\n")[17]); //get line 'Total'
+		assertEquals("Unknown category found: \"invalid\". It could not be classified, and the record was ignored.",buildTokenArray(builder.getResult(),"\n")[19]);
 
 	}
-
-	@Test
+	
+		@Test
 	public void TestNegativeHourValue() {
 		builder.buildWorkSpecification("saip", "-", -5);
 		builder.buildEnd();
 		//System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",buildTokenArray(builder.getResult(),"\n")[17]); //get line 'Total'
+		assertEquals("Illegal value for hours found: \"-5.0\". The record was ignored.",buildTokenArray(builder.getResult(),"\n")[19]); 
 
 	}
 
-	@Test
-	public void TestOverflowCategoryHours() {
-		builder.buildWorkSpecification("saip", "-", 1234567);
-		builder.buildEnd();
-		System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",buildTokenArray(builder.getResult(),"\n")[17]); //get line 'Total'
-
-	}
-
-	
-	public void TestOverflowClassHours() {
-		builder.buildWorkSpecification("saip", "-", 1234567890);
-		builder.buildEnd();
-	//	System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",buildTokenArray(builder.getResult(),"\n")[17]); //get line 'Total'
-
-	}
-
-	@Test
-	public void TestOverflowInPercentage() {
-		builder.buildWorkSpecification("saip", "-", 1);
-		builder.buildWorkSpecification("terna", "-", 100);
-		builder.buildEnd();
-	//	System.err.println(builder.getResult());
-		assertEquals("consulent               1000.0 (10000%)",buildTokenArray(builder.getResult(),"\n")[12]); //get line 'consulent'
-	}
-
-
-	@Test
-	public void TestOverflowInTotalSum2() {
-		builder.buildWorkSpecification("saip", "-", 99999);
-		builder.buildWorkSpecification("censor", "-", 99999);
-		builder.buildWorkSpecification("sa", "-", 99999);
-		builder.buildWorkSpecification("mtt", "-", 99999);
-		builder.buildWorkSpecification("book2", "-", 99999);
-		builder.buildWorkSpecification("n4c", "-", 99999);
-		builder.buildWorkSpecification("itevmd", "-", 99999);
-		builder.buildWorkSpecification("terna", "-", 99999);
-		builder.buildWorkSpecification("adm", "-", 99999);
-		builder.buildWorkSpecification("syg", "-", 99999);
-		builder.buildWorkSpecification("es", "-", 99999);
-		builder.buildEnd();
-		//System.err.println(builder.getResult());
-		assertEquals("consulent               1000.0 (10000%)",buildTokenArray(builder.getResult(),"\n")[12]); //get line 'consulent'
-	}
-
-	
-	
-	
-	//@Test   /* for lige at kunne se outputtet*/ 
-	public void Test() {
-		builder.buildWorkSpecification("test", "-", 5);
-		//builder.buildWorkSpecification("terna", "-", 8.5);
-		builder.buildEnd();
-		System.err.println(builder.getResult());
-	}
-	
-	
+		
 	 /** Split a line into an array of tokens,
 	   * whitespace is delimiter.
 	   * @param line the line to split

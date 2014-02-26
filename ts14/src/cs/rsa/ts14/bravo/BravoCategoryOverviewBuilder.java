@@ -43,13 +43,17 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
 
   // Result string
   String resultString;
+  // Error string
+  String errorString;
 
+  
   @Override
   public void buildBegin() {
     workCategoryToHoursMap = new LinkedHashMap<String, Double>();
     workClassToHoursMap = new HashMap<ClassType, Double>();
     totalWorkHours = 0;
     resultString = "";
+    errorString = "";
     
     // Initialize work categories to ensure that all categories are shown + in the specified order
     workCategoryToHoursMap.put("saip", 0.0);
@@ -79,8 +83,18 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   @Override
   public void buildWorkSpecification(String category, String subCategory,
       double hours) {
+	  
     ClassType classType = ClassMap.mapCategoryToClass(category);
-
+/*
+ * input validation
+ */
+    if(hours < 0 && errorString.equals("")){ //if error already set, then keep that error message
+    	errorString = "Illegal value for hours found: \""+hours + "\". The record was ignored.";
+    }
+  	if(classType == null && errorString.equals("")){ //if error already set, then keep that error message
+    		errorString = "Unknown category found: \""+category + "\". It could not be classified, and the record was ignored.";
+   	}
+  	else{
     if(classType != null && workCategoryToHoursMap != null && workClassToHoursMap != null)
     {
       // Add hours to work category
@@ -102,6 +116,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       // Add hours to total work hours
       totalWorkHours += hours;
     }
+  	}
   }
 
   @Override
@@ -160,6 +175,11 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
                                              totalWorkHours));
     resultStringBuilder.append("                          ===============\n");
 
+    
+    //setup errorstring
+    if(!errorString.equals("")){
+    	resultStringBuilder.append(errorString).append("\n");
+    }
     resultString = resultStringBuilder.toString();
   }
 
