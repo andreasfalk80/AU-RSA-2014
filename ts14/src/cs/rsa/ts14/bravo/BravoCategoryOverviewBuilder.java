@@ -19,6 +19,8 @@ package cs.rsa.ts14.bravo;
 import cs.rsa.ts14.framework.ClassType;
 import cs.rsa.ts14.framework.ReportBuilder;
 import cs.rsa.ts14.standard.ClassMap;
+
+import java.util.Locale;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -41,13 +43,16 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
 
   // Result string
   String resultString;
-
+  // Error string
+  String errorString;
+ 
   @Override
   public void buildBegin() {
     workCategoryToHoursMap = new LinkedHashMap<String, Double>();
     workClassToHoursMap = new HashMap<ClassType, Double>();
     totalWorkHours = 0;
     resultString = "";
+    errorString = "";
     
     // Initialize work categories to ensure that all categories are shown + in the specified order
     workCategoryToHoursMap.put("saip", 0.0);
@@ -77,29 +82,42 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   @Override
   public void buildWorkSpecification(String category, String subCategory,
       double hours) {
-    ClassType classType = ClassMap.mapCategoryToClass(category);
-
-    if(classType != null && workCategoryToHoursMap != null && workClassToHoursMap != null)
-    {
-      // Add hours to work category
-      double workCategoryHours = hours;
-      if(workCategoryToHoursMap.containsKey(category))
-      {
-        workCategoryHours += workCategoryToHoursMap.get(category);
+	
+	// if an error has been found, ignore other input
+	if(errorString.equals(""))
+	{
+      ClassType classType = ClassMap.mapCategoryToClass(category);
+      if(classType == null){
+    		errorString = "Unknown category found: \""+category + "\". It could not be classified, and the record was ignored.";
+ 	  }
+      else if(hours < 0){
+      	errorString = "Illegal value for hours found: \""+hours + "\". The record was ignored.";
       }
-      workCategoryToHoursMap.put(category, workCategoryHours);
-
-      // Add hours to work class
-      double workClassHours = hours;
-      if(workClassToHoursMap.containsKey(classType))
-      {
-        workClassHours += workClassToHoursMap.get(classType);
+      else if(workCategoryToHoursMap == null || workClassToHoursMap == null){
+      	errorString = "Data storage not ready, make sure to call buildBegin() before buildWorkSpecification()";
       }
-      workClassToHoursMap.put(classType, workClassHours);
+      else	  
+      {
+        // Add hours to work category
+        if(workCategoryToHoursMap.containsKey(category))
+        {
+          double workCategoryHours = hours;
+          workCategoryHours += workCategoryToHoursMap.get(category);
+          workCategoryToHoursMap.put(category, workCategoryHours);
+        }
 
-      // Add hours to total work hours
-      totalWorkHours += hours;
-    }
+        // Add hours to work class
+        if(workClassToHoursMap.containsKey(classType))
+        {
+          double workClassHours = hours;
+          workClassHours += workClassToHoursMap.get(classType);
+          workClassToHoursMap.put(classType, workClassHours);
+        }
+
+        // Add hours to total work hours
+        totalWorkHours += hours;
+      }
+  	}
   }
 
   @Override
@@ -113,7 +131,10 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   @Override
   public void buildEnd() {
     StringBuilder resultStringBuilder = new StringBuilder();
+    //create new Locale, to make sure the deciml point is '.' and not ','
+    Locale engLocale = new Locale("ENG");
 
+    
     // The percentace calculations are apparently done without calculating the cosultancy hours
     double totalWorkHoursWithoutConsultancy = totalWorkHours-workClassToHoursMap.get(ClassType.CONSULENT);
 
@@ -132,8 +153,8 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       double classHours = workClassToHoursMap.get(classType);
       double classPercentOfTotal = (classHours/totalWorkHoursWithoutConsultancy) * 100;
 
-      // Append work class line to result
-      resultStringBuilder.append(String.format("%-26s%4.1f (%3.0f%%)\n",
+	  // Append work class line to result
+      resultStringBuilder.append(String.format(engLocale,"%-21s%9.1f (%3.0f%%)\n",
                                                getClassString(classType),
                                                classHours,
                                                classPercentOfTotal));
@@ -142,7 +163,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       for (Map.Entry<String, Double> entry : workCategoryToHoursMap.entrySet()) {
         if(ClassMap.mapCategoryToClass(entry.getKey()) == classType) {
           // Append work category line to result
-          resultStringBuilder.append(String.format("    %-9s:    %4.1f\n",
+          resultStringBuilder.append(String.format(engLocale,"    %-9s:%8.1f\n",
                                                    entry.getKey(),
                                                    entry.getValue()));
         }
@@ -150,11 +171,16 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
     }
 
     // Append total to result
-    resultStringBuilder.append(String.format("Total:                    %4.1f (%3.0f)\n",
+    resultStringBuilder.append(String.format(engLocale,"Total:              %10.1f (%s)\n",
                                              totalWorkHoursWithoutConsultancy,
                                              totalWorkHours));
     resultStringBuilder.append("                          ===============\n");
 
+    
+    //setup errorstring
+    if(!errorString.equals("")){
+    	resultStringBuilder.append(errorString).append("\n");
+    }
     resultString = resultStringBuilder.toString();
   }
 

@@ -28,33 +28,43 @@ import cs.rsa.ts14.framework.LineTypeClassifierStrategy;
  */
 
 public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrategy {
-
+	// matcher 1-53
+	private static String weekNumbersPattern = "([1-9]|[1-4][0-9]|[5][0-3])";
+	//matcher a-z ikke casesensitive
+	private static String lettersPattern = "[a-zA-Z]";
+	//matcher vilkårligt tal, hvor decimalpoint og et ciffer efter er valgfrit. Ingen grænse for antal cifre før decimalpoint
+	private static String decimal_n_1_Pattern = "(\\d+|0)(\\.\\d+)?"; //n angiver antal før 1 antal efter decimalpoint 
+	//matcher kort notation for ugedage 
+	private static String weekdaysShortPattern = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"; 
+	//matcher ord der starter med et bogstav, og derefter kan indeholde hvad som helst 
+	private static String wordsStartingWithLetterPattern = lettersPattern+"\\w*"; 
+	//matcher  0-24 i intervaller på 0.5. mind 0.5 maks 24 Eksempler: , 0.5 , 1.5 , 5.0 , 5 , 23.5 , 24 , 24.0
+	private static String everyHalfHourInADayPattern = "((0\\.5)|(([1-9]|1[0-9]|2[0-3])(\\.[05])?)|(24(\\.[0])?))"; 
+	
+	
 	LineType lastSeen;
 	ArrayList<LineMatch> lines;
 
 	public BravoLineTypeClassifierStrategy() {
 		lines = new ArrayList<LineMatch>();
-		// Sjovt at når det kodes pattern, så er det match et tegn adgangen, så
-		// her er der ikke tale om kode for at håndtere en range!!! giver flere
-		// tests
 		
 		//match for Week specification line:  Week 1 :	3	:	0 
-		lines.add(new LineMatch("Week\\s+([1-9]|[1-4][0-9]|[5][0-3])\\s+:\\s+[0-5]\\s+:\\s+[0-5]\\s*", LineType.WEEK_SPECIFICATION));
+		lines.add(new LineMatch("^Week\\s+"+weekNumbersPattern+"\\s+:\\s+[0-5]\\s+:\\s+[0-5]$", LineType.WEEK_SPECIFICATION));
 		
 		//match for Assignment line:  HoursOvertime = 502.2 
-		lines.add(new LineMatch("\\w+\\s+=\\s+\\d+(.\\d+)?", LineType.ASSIGNMENT_LINE));
+		lines.add(new LineMatch("^"+lettersPattern+"+\\s+=\\s+"+decimal_n_1_Pattern+"$", LineType.ASSIGNMENT_LINE));
 		
 		//match for Weekday specification line:  Fri		Ca				8.00-16.30
-		lines.add(new LineMatch("(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\\s+(Bi|Ca|Pu|Tr|No|Ho).*", LineType.WEEKDAY_SPECIFICATION));
+		lines.add(new LineMatch("^"+weekdaysShortPattern+"\\s+(Bi|Ca|Pu|Tr|No|Ho)(\\s+.*$|$)", LineType.WEEKDAY_SPECIFICATION));
 		
-		//match for Weekday Work specification line: censor	-		7.5
-		lines.add(new LineMatch("\\s+\\D\\w*\\s+(-|\\D\\w*)\\s+[0-9](\\.[05])?.*", LineType.WORK_SPECIFICATION));
+		//match for Work specification line: censor	-		7.5
+		lines.add(new LineMatch("^\\s+"+wordsStartingWithLetterPattern+"\\s+(-|"+wordsStartingWithLetterPattern+")\\s+"+everyHalfHourInADayPattern+"(\\s+.*$|$)", LineType.WORK_SPECIFICATION));
 		
 		//match for Comment: # dette er en kommentar
-		lines.add(new LineMatch("#.*", LineType.COMMENT_LINE));
+		lines.add(new LineMatch("^#.*$", LineType.COMMENT_LINE));
 		
 		//match for Empty line: "   "
-		lines.add(new LineMatch("\\s*", LineType.EMPTY_LINE));
+		lines.add(new LineMatch("^\\s*$", LineType.EMPTY_LINE));
 	}
 
 	@Override
