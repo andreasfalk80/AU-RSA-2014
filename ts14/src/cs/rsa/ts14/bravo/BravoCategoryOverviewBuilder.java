@@ -138,7 +138,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       double classPercentOfTotal = (classHours/totalWorkHoursWithoutConsultancy) * 100;
 
 	  // Append work class line to result
-      resultStringBuilder.append(String.format(engLocale,"%-26s%4.1f (%3.0f%%)\n",
+      resultStringBuilder.append(String.format(engLocale,"%-21s%9.1f (%3.0f%%)\n",
                                                getClassString(classType),
                                                classHours,
                                                classPercentOfTotal));
@@ -147,7 +147,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       for (Map.Entry<String, Double> entry : workCategoryToHoursMap.entrySet()) {
         if(ClassMap.mapCategoryToClass(entry.getKey()) == classType) {
           // Append work category line to result
-          resultStringBuilder.append(String.format(engLocale,"    %-9s:    %4.1f\n",
+          resultStringBuilder.append(String.format(engLocale,"    %-9s:%8.1f\n",
                                                    entry.getKey(),
                                                    entry.getValue()));
         }
@@ -155,7 +155,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
     }
 
     // Append total to result
-    resultStringBuilder.append(String.format(engLocale,"Total:                    %4.1f (%3.1f)\n",
+    resultStringBuilder.append(String.format(engLocale,"Total:              %10.1f (%s)\n",
                                              totalWorkHoursWithoutConsultancy,
                                              totalWorkHours));
     resultStringBuilder.append("                          ===============\n");

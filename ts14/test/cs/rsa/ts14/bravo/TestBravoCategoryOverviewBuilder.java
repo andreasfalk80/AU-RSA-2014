@@ -25,10 +25,12 @@ public class TestBravoCategoryOverviewBuilder {
  * @return Contents of the line from the builder output 	
  */
 	private String happyPathLine(int linenumber){
-		builder.buildWorkSpecification("saip", "-", 5);
+		builder.buildWorkSpecification("saip", "-", 500);
 		builder.buildWorkSpecification("sa", "-", 8.5);
 		builder.buildWorkSpecification("book2", "-", 4);
+		builder.buildWorkSpecification("book2", "-", 6);
 		builder.buildEnd();
+//		System.err.println(builder.getResult());
 		return buildTokenArray(builder.getResult(),"\n")[linenumber-1];
 	}
 
@@ -39,12 +41,13 @@ public class TestBravoCategoryOverviewBuilder {
 	
 	@Test
 	public void TestHappyPathLine2() {
-		assertEquals("teaching                  13.5 ( 77%)",happyPathLine(2));
+		assertEquals("teaching                 508.5 ( 98%)",happyPathLine(2));
+		             
 	}
 
 	@Test
 	public void TestHappyPathLine3() {
-		assertEquals("    saip     :     5.0",happyPathLine(3));
+		assertEquals("    saip     :   500.0",happyPathLine(3));
 	}
 
 	@Test
@@ -64,7 +67,7 @@ public class TestBravoCategoryOverviewBuilder {
 	
 	@Test
 	public void TestHappyPathLine7() {
-		assertEquals("research                   4.0 ( 23%)",happyPathLine(7));
+		assertEquals("research                  10.0 (  2%)",happyPathLine(7));
 	}
 
 	@Test
@@ -74,7 +77,7 @@ public class TestBravoCategoryOverviewBuilder {
 
 	@Test
 	public void TestHappyPathLine9() {
-		assertEquals("    book2    :     4.0",happyPathLine(9));
+		assertEquals("    book2    :    10.0",happyPathLine(9));
 	}
 
 	@Test
@@ -120,7 +123,7 @@ public class TestBravoCategoryOverviewBuilder {
 	@Test
 	public void TestHappyPathLine18() {
 		
-		assertEquals("Total:                    17.5 (17.5)",happyPathLine(18));
+		assertEquals("Total:                   518.5 (518.5)",happyPathLine(18));
 	}
 
 	@Test
@@ -144,10 +147,10 @@ public class TestBravoCategoryOverviewBuilder {
 	
 	//@Test   /* for lige at kunne se outputtet*/ 
 	public void Test() {
-		builder.buildWorkSpecification("saip", "-", 5);
-		builder.buildWorkSpecification("terna", "-", 8.5);
+		builder.buildWorkSpecification("test", "-", 5);
+		//builder.buildWorkSpecification("terna", "-", 8.5);
 		builder.buildEnd();
-		//System.err.println(builder.getResult());
+		System.err.println(builder.getResult());
 	}
 	
 	
