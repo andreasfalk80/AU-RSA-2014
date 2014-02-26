@@ -91,8 +91,9 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
     if(hours < 0 && errorString.equals("")){ //if error already set, then keep that error message
     	errorString = "Illegal value for hours found: \""+hours + "\". The record was ignored.";
     }
+    else{
   	if(classType == null && errorString.equals("")){ //if error already set, then keep that error message
-    		errorString = "Unknown category found: \""+category + "\". It could not be classified, and the record was ignored.";
+    		errorString = "Unknown category found: \""+category + "\". The record was ignored.";
    	}
   	else{
     if(classType != null && workCategoryToHoursMap != null && workClassToHoursMap != null)
@@ -116,6 +117,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
       // Add hours to total work hours
       totalWorkHours += hours;
     }
+  	}
   	}
   }
 
@@ -150,7 +152,16 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
         classType = ClassType.TEACHING;
 
       double classHours = workClassToHoursMap.get(classType);
-      double classPercentOfTotal = (classHours/totalWorkHoursWithoutConsultancy) * 100;
+      
+      //handle if no categories other than consulent is found.
+      double classPercentOfTotal;
+      if(totalWorkHoursWithoutConsultancy != 0){
+    	  classPercentOfTotal = (classHours/totalWorkHoursWithoutConsultancy) * 100;
+      }
+      else{
+    	  classPercentOfTotal = 0;
+      }
+    	  
 
 	  // Append work class line to result
       resultStringBuilder.append(String.format(engLocale,"%-21s%9.1f (%3.0f%%)\n",

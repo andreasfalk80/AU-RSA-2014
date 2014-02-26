@@ -19,117 +19,133 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildBegin();
 	}
 
-/**
- * This method uses the builder to create output, and then returns the requested line from that output
- * @param linenumber the line from the output of the builder to return (indexed from 1)
- * @return Contents of the line from the builder output 	
- */
-	private String happyPathLine(int linenumber){
-		builder.buildWorkSpecification("saip", "-", 500);
-		builder.buildWorkSpecification("sa", "-", 8.5);
-		builder.buildWorkSpecification("book2", "-", 4);
-		builder.buildWorkSpecification("book2", "-", 6);
-		builder.buildEnd();
-//		System.err.println(builder.getResult());
-		return buildTokenArray(builder.getResult(),"\n")[linenumber-1];
-	}
-
+	
+	/**
+	 * This method uses the builder to create output for a specific testcase called happyPath 
+	 *  	
+	 */
+		private void buildHappyPath(){
+			builder.buildWorkSpecification("saip", "-", 500);
+			builder.buildWorkSpecification("sa", "-", 8.5);
+			builder.buildWorkSpecification("book2", "-", 4);
+			builder.buildWorkSpecification("book2", "-", 6);
+			builder.buildEnd();
+//			System.err.println(builder.getResult());
+		}
+	
 	@Test
 	public void TestHappyPathLine1() {
-		assertEquals("-- Time spent on classes and categories --",happyPathLine(1));
+		buildHappyPath();
+		assertEquals("-- Time spent on classes and categories --",getBuilderResultLine(1));
 	}
 	
 	@Test
 	public void TestHappyPathLine2() {
-		assertEquals("teaching                 508.5 ( 98%)",happyPathLine(2));
+		buildHappyPath();
+		assertEquals("teaching                 508.5 ( 98%)",getBuilderResultLine(2));
 		             
 	}
 
 	@Test
 	public void TestHappyPathLine3() {
-		assertEquals("    saip     :   500.0",happyPathLine(3));
+		buildHappyPath();
+		assertEquals("    saip     :   500.0",getBuilderResultLine(3));
 	}
 
 	@Test
 	public void TestHappyPathLine4() {
-		assertEquals("    censor   :     0.0",happyPathLine(4));
+		buildHappyPath();
+		assertEquals("    censor   :     0.0",getBuilderResultLine(4));
 	}
 
 	@Test  
 	public void TestHappyPathLine5() {
-		assertEquals("    sa       :     8.5",happyPathLine(5));
+		buildHappyPath();
+		assertEquals("    sa       :     8.5",getBuilderResultLine(5));
 	}
 
 	@Test
 	public void TestHappyPathLine6() {
-		assertEquals("    mtt      :     0.0",happyPathLine(6));
+		buildHappyPath();
+		assertEquals("    mtt      :     0.0",getBuilderResultLine(6));
 	}
 	
 	@Test
 	public void TestHappyPathLine7() {
-		assertEquals("research                  10.0 (  2%)",happyPathLine(7));
+		buildHappyPath();
+		assertEquals("research                  10.0 (  2%)",getBuilderResultLine(7));
 	}
 
 	@Test
 	public void TestHappyPathLine8() {
-		assertEquals("    es       :     0.0",happyPathLine(8));
+		buildHappyPath();
+		assertEquals("    es       :     0.0",getBuilderResultLine(8));
 	}
 
 	@Test
 	public void TestHappyPathLine9() {
-		assertEquals("    book2    :    10.0",happyPathLine(9));
+		buildHappyPath();
+		assertEquals("    book2    :    10.0",getBuilderResultLine(9));
 	}
 
 	@Test
 	public void TestHappyPathLine10() {
-		assertEquals("    n4c      :     0.0",happyPathLine(10));
+		buildHappyPath();
+		assertEquals("    n4c      :     0.0",getBuilderResultLine(10));
 	}
 
 	@Test
 	public void TestHappyPathLine11() {
-		assertEquals("misc                       0.0 (  0%)",happyPathLine(11));
+		buildHappyPath();
+		assertEquals("misc                       0.0 (  0%)",getBuilderResultLine(11));
 	}
 
 	@Test
 	public void TestHappyPathLine12() {
-		assertEquals("    syg      :     0.0",happyPathLine(12));
+		buildHappyPath();
+		assertEquals("    syg      :     0.0",getBuilderResultLine(12));
 	}
 
 	@Test
 	public void TestHappyPathLine13() {
-		assertEquals("consulent                  0.0 (  0%)",happyPathLine(13));
+		buildHappyPath();
+		assertEquals("consulent                  0.0 (  0%)",getBuilderResultLine(13));
 	}
 
 	@Test
 	public void TestHappyPathLine14() {
-		assertEquals("    terna    :     0.0",happyPathLine(14));
+		buildHappyPath();
+		assertEquals("    terna    :     0.0",getBuilderResultLine(14));
 	}
 
 	@Test
 	public void TestHappyPathLine15() {
-		assertEquals("adm                        0.0 (  0%)",happyPathLine(15));
+		buildHappyPath();
+		assertEquals("adm                        0.0 (  0%)",getBuilderResultLine(15));
 	}
 
 	@Test
 	public void TestHappyPathLine16() {
-		assertEquals("    itevmd   :     0.0",happyPathLine(16));
+		buildHappyPath();
+		assertEquals("    itevmd   :     0.0",getBuilderResultLine(16));
 	}
 
 	@Test
 	public void TestHappyPathLine17() {
-		assertEquals("    adm      :     0.0",happyPathLine(17));
+		buildHappyPath();
+		assertEquals("    adm      :     0.0",getBuilderResultLine(17));
 	}
 
 	@Test
 	public void TestHappyPathLine18() {
-		
-		assertEquals("Total:                   518.5 (518.5)",happyPathLine(18));
+		buildHappyPath();
+		assertEquals("Total:                   518.5 (518.5)",getBuilderResultLine(18));
 	}
 
 	@Test
 	public void TestHappyPathLine19() {
-		happyPathLine(19);
-		assertEquals("                          ===============",happyPathLine(19));
+		buildHappyPath();
+		assertEquals("                          ===============",getBuilderResultLine(19));
 	}
 
 	
@@ -139,7 +155,7 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildWorkSpecification("terna", "-", 8.5);
 		builder.buildEnd();
 	//	System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",buildTokenArray(builder.getResult(),"\n")[17]); //get line 'Total'
+		assertEquals("Total:                     5.0 (13.5)",getBuilderResultLine(18)); 
 	}
 
 	
@@ -147,8 +163,8 @@ public class TestBravoCategoryOverviewBuilder {
 	public void TestInvalidCategory() {
 		builder.buildWorkSpecification("invalid", "-", 1);
 		builder.buildEnd();
-		//System.err.println(builder.getResult());
-		assertEquals("Unknown category found: \"invalid\". It could not be classified, and the record was ignored.",buildTokenArray(builder.getResult(),"\n")[19]);
+//		System.err.println(builder.getResult());
+		assertEquals("Unknown category found: \"invalid\". The record was ignored.",getBuilderResultLine(20));
 
 	}
 	
@@ -157,14 +173,67 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildWorkSpecification("saip", "-", -5);
 		builder.buildEnd();
 		//System.err.println(builder.getResult());
-		assertEquals("Illegal value for hours found: \"-5.0\". The record was ignored.",buildTokenArray(builder.getResult(),"\n")[19]); 
+		assertEquals("Illegal value for hours found: \"-5.0\". The record was ignored.",getBuilderResultLine(20)); 
 
 	}
 
+
+		@Test
+	public void TestAllCategories() {
+		builder.buildWorkSpecification("saip", "-", 1);
+		builder.buildWorkSpecification("censor", "-", 2);
+		builder.buildWorkSpecification("sa", "-", 3);
+		builder.buildWorkSpecification("mtt", "-", 4);
+		builder.buildWorkSpecification("es", "-", 5);
+		builder.buildWorkSpecification("book2", "-", 6);
+		builder.buildWorkSpecification("n4c", "-", 7);
+		builder.buildWorkSpecification("syg", "-", 8);
+		builder.buildWorkSpecification("terna", "-", 9);
+		builder.buildWorkSpecification("itevmd", "-", 10);
+		builder.buildWorkSpecification("adm", "-", 11);
+		builder.buildEnd();
+	//	System.err.println(builder.getResult());
+		assertEquals("    saip     :     1.0",getBuilderResultLine(3)); 
+		assertEquals("    censor   :     2.0",getBuilderResultLine(4));
+		assertEquals("    sa       :     3.0",getBuilderResultLine(5));
+		assertEquals("    mtt      :     4.0",getBuilderResultLine(6));
+		assertEquals("    es       :     5.0",getBuilderResultLine(8));
+		assertEquals("    book2    :     6.0",getBuilderResultLine(9));
+		assertEquals("    n4c      :     7.0",getBuilderResultLine(10));
+		assertEquals("    syg      :     8.0",getBuilderResultLine(12));
+		assertEquals("    terna    :     9.0",getBuilderResultLine(14));
+		assertEquals("    itevmd   :    10.0",getBuilderResultLine(16));
+		assertEquals("    adm      :    11.0",getBuilderResultLine(17));
+	}
+
+		@Test
+	public void TestNoWorkSpecifications() {
+		builder.buildEnd();
+		assertEquals("teaching                   0.0 (  0%)",getBuilderResultLine(2));
+		assertEquals("    saip     :     0.0",getBuilderResultLine(3)); 
+		assertEquals("    censor   :     0.0",getBuilderResultLine(4));
+		assertEquals("    sa       :     0.0",getBuilderResultLine(5));
+		assertEquals("    mtt      :     0.0",getBuilderResultLine(6));
+		assertEquals("research                   0.0 (  0%)",getBuilderResultLine(7));
+		assertEquals("    es       :     0.0",getBuilderResultLine(8));
+		assertEquals("    book2    :     0.0",getBuilderResultLine(9));
+		assertEquals("    n4c      :     0.0",getBuilderResultLine(10));
+		assertEquals("misc                       0.0 (  0%)",getBuilderResultLine(11));
+		assertEquals("    syg      :     0.0",getBuilderResultLine(12));
+		assertEquals("consulent                  0.0 (  0%)",getBuilderResultLine(13));
+		assertEquals("    terna    :     0.0",getBuilderResultLine(14));
+		assertEquals("adm                        0.0 (  0%)",getBuilderResultLine(15));
+		assertEquals("    itevmd   :     0.0",getBuilderResultLine(16));
+		assertEquals("    adm      :     0.0",getBuilderResultLine(17));
+		assertEquals("Total:                     0.0 (0.0)",getBuilderResultLine(18));
+
+	}
+		
+		
 		
 	 /** Split a line into an array of tokens,
-	   * whitespace is delimiter.
 	   * @param line the line to split
+	   * @param delim is the delimiter
 	   * @return array of tokens in the line
 	   */
 	  private String[] buildTokenArray(String line,String delim) {
@@ -178,4 +247,14 @@ public class TestBravoCategoryOverviewBuilder {
 	    }
 	    return tokenList;
 	  }
+	  
+	  /**
+	   * 
+	   * @param linenumber
+	   * @return the content of the specified line from the builder
+	   */
+		private String getBuilderResultLine(int linenumber){
+			return buildTokenArray(builder.getResult(),"\n")[linenumber-1];
+		}
+	
 }
