@@ -54,14 +54,14 @@ public class TestClassifier {
   
   @Test
   public void shouldDenyInvalidWeekline1() {
-    line = "week 1 : 3 : ";
+    line = "Week 1 : 3 : ";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline2() {
-    line = "week 1 : 3 : 0 0 ";
+    line = "Week 1 : 3 : 0 0 ";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
@@ -75,63 +75,84 @@ public class TestClassifier {
   
   @Test
   public void shouldDenyInvalidWeekline4() {
-    line = "week 0 : 3 : 0";
+    line = "Week 0 : 3 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline5() {
-    line = "week 54 : 3 : 0";
+    line = "Week 54 : 3 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline6() {
-    line = "week 1 ; 3 : 0";
+    line = "Week 1 ; 3 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline7() {
-    line = "week 1 : -1 : 0";
+    line = "Week 1 : -1 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline8() {
-    line = "week 1 : 6 : 0";
+    line = "Week 1 : 6 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline9() {
-    line = "week 1 : 3 ; 0";
+    line = "Week 1 : 3 ; 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline10() {
-    line = "week 1 : 3 : -1";
+    line = "Week 1 : 3 : -1";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
   public void shouldDenyInvalidWeekline11() {
-    line = "week 1 : 3 : 6 ";
+    line = "Week 1 : 3 : 6 ";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
   
   @Test
-  public void shouldAcceptValidWeekline() {
-    line = "week 1 : 3 : 0";
+  public void shouldAcceptValidWeekline1() {
+    line = "Week 1 : 3 : 0";
+    LineType theLineType = processor.process(line);
+    assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
+  }
+  
+  @Test
+  public void shouldAcceptValidWeekline2() {
+    line = "Week 53 : 3 : 0";
+    LineType theLineType = processor.process(line);
+    assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
+  }
+  
+  @Test
+  public void shouldAcceptValidWeekline3() {
+    line = "Week 1 : 5 : 0";
+    LineType theLineType = processor.process(line);
+    assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
+  }
+  
+  @Test
+  public void shouldAcceptValidWeekline4() {
+    line = "Week 1 : 0 : 5";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
   }
@@ -322,7 +343,7 @@ public class TestClassifier {
 
   @Test
   public void shouldDenyInvalidWorkline5() {
-    line = "  censor    - -1";
+    line = "  censor    - 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
@@ -351,6 +372,20 @@ public class TestClassifier {
   @Test
   public void shouldAcceptValidWorkline3() {
     line = "  censor    - 7.5";
+    LineType theLineType = processor.process(line);
+    assertEquals(LineType.WORK_SPECIFICATION, theLineType);
+  }
+  
+  @Test
+  public void shouldAcceptValidWorkline4() {
+    line = "  censor    - 0.5";
+    LineType theLineType = processor.process(line);
+    assertEquals(LineType.WORK_SPECIFICATION, theLineType);
+  }
+  
+  @Test
+  public void shouldAcceptValidWorkline5() {
+    line = "  censor    - 24";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WORK_SPECIFICATION, theLineType);
   }
