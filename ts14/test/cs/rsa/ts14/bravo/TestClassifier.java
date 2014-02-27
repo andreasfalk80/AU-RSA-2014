@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 /** JUnit tests. 
  * 
  * @author Bobby Nielsen
- * FIXME Alle tests af week er skrevet med 'week' istedetfor 'Week'. Dette skal rettes når det er afklaret med gruppen, ellers skal det rettes i implementationen
+ * FIXME Alle tests af week er skrevet med 'week' istedetfor 'Week'. Dette skal rettes nï¿½r det er afklaret med gruppen, ellers skal det rettes i implementationen
  */
 public class TestClassifier {
   
@@ -143,7 +143,7 @@ public class TestClassifier {
   
   @Test
   public void shouldDenyInvalidWeekline12() {
-    line = "Week 1 : 3 : 3 ";
+    line = "Week 1 : 3 : 3";
     LineType theLineType = classifier.classify(line);
     assertEquals(LineType.INVALID_LINE, theLineType);
   }
