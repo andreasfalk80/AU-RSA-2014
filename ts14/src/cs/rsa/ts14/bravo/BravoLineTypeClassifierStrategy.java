@@ -55,10 +55,10 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 		lines.add(new LineMatch("^"+lettersPattern+"+\\s+=\\s+"+decimal_n_1_Pattern+"$", LineType.ASSIGNMENT_LINE));
 		
 		//match for Weekday specification line:  Fri		Ca				8.00-16.30
-		lines.add(new LineMatch("^"+weekdaysShortPattern+"\\s+(Bi|Ca|Pu|Tr|No|Ho).*$", LineType.WEEKDAY_SPECIFICATION));
+		lines.add(new LineMatch("^"+weekdaysShortPattern+"\\s+(Bi|Ca|Pu|Tr|No|Ho)(\\s+.*$|$)", LineType.WEEKDAY_SPECIFICATION));
 		
 		//match for Work specification line: censor	-		7.5
-		lines.add(new LineMatch("^\\s+"+wordsStartingWithLetterPattern+"\\s+(-|"+wordsStartingWithLetterPattern+")\\s+"+everyHalfHourInADayPattern+"$", LineType.WORK_SPECIFICATION));
+		lines.add(new LineMatch("^\\s+"+wordsStartingWithLetterPattern+"\\s+(-|"+wordsStartingWithLetterPattern+")\\s+"+everyHalfHourInADayPattern+"(\\s+.*$|$)", LineType.WORK_SPECIFICATION));
 		
 		//match for Comment: # dette er en kommentar
 		lines.add(new LineMatch("^#.*$", LineType.COMMENT_LINE));

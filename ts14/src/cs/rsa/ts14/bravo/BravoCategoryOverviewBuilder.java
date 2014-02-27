@@ -45,8 +45,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   String resultString;
   // Error string
   String errorString;
-
-  
+ 
   @Override
   public void buildBegin() {
     workCategoryToHoursMap = new LinkedHashMap<String, Double>();
@@ -83,8 +82,21 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
   @Override
   public void buildWorkSpecification(String category, String subCategory,
       double hours) {
-	  
-    ClassType classType = ClassMap.mapCategoryToClass(category);
+	
+	// if an error has been found, ignore other input
+	if(errorString.equals(""))
+	{
+      ClassType classType = ClassMap.mapCategoryToClass(category);
+      if(classType == null){
+    		errorString = "Unknown category found: \""+category + "\". It could not be classified, and the record was ignored.";
+ 	  }
+      else if(hours < 0){
+      	errorString = "Illegal value for hours found: \""+hours + "\". The record was ignored.";
+      }
+      else if(workCategoryToHoursMap == null || workClassToHoursMap == null){
+      	errorString = "Data storage not ready, make sure to call buildBegin() before buildWorkSpecification()";
+      }
+      else	  
 /*
  * input validation
  */
@@ -96,27 +108,25 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
     		errorString = "Unknown category found: \""+category + "\". The record was ignored.";
    	}
   	else{
-    if(classType != null && workCategoryToHoursMap != null && workClassToHoursMap != null)
-    {
-      // Add hours to work category
-      double workCategoryHours = hours;
-      if(workCategoryToHoursMap.containsKey(category))
       {
-        workCategoryHours += workCategoryToHoursMap.get(category);
-      }
-      workCategoryToHoursMap.put(category, workCategoryHours);
+        // Add hours to work category
+        if(workCategoryToHoursMap.containsKey(category))
+        {
+          double workCategoryHours = hours;
+          workCategoryHours += workCategoryToHoursMap.get(category);
+          workCategoryToHoursMap.put(category, workCategoryHours);
+        }
+        // Add hours to work class
+        if(workClassToHoursMap.containsKey(classType))
+        {
+          double workClassHours = hours;
+          workClassHours += workClassToHoursMap.get(classType);
+          workClassToHoursMap.put(classType, workClassHours);
+        }
 
-      // Add hours to work class
-      double workClassHours = hours;
-      if(workClassToHoursMap.containsKey(classType))
-      {
-        workClassHours += workClassToHoursMap.get(classType);
+        // Add hours to total work hours
+        totalWorkHours += hours;
       }
-      workClassToHoursMap.put(classType, workClassHours);
-
-      // Add hours to total work hours
-      totalWorkHours += hours;
-    }
   	}
   	}
   }
