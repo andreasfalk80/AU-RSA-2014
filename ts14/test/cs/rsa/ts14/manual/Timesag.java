@@ -22,6 +22,7 @@ import org.apache.commons.io.*;
 import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
+import cs.rsa.ts14.bravo.*;
 
 /** A command line processor that reads a timesag file and
  * outputs the required report.
@@ -51,13 +52,13 @@ public class Timesag {
     // TODO: introduce the proper builder and line type
     // classifier based upon the W,C,T parameter on the
     // command line
-    ReportBuilder builder = new SpyWorkloadBuilder();
+    ReportBuilder builder = new BravoCategoryOverviewBuilder();
     LineSequenceState sequenceState = new LineSequenceStateStub();
     TimesagLineProcessor tlp = 
         new StandardTimesagLineProcessor( 
-            new FaultyLineTypeClassifierStrategy(),
+            new BravoLineTypeClassifierStrategy(),
             builder, sequenceState );
-    
+        
     // Create an iterator for the lines in the file
     LineIterator it = FileUtils.lineIterator(file, "UTF-8");
     tlp.beginProcess();

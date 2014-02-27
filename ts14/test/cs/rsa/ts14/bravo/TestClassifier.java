@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 /** JUnit tests. 
  * 
  * @author Bobby Nielsen
- *
+ * FIXME Alle tests af week er skrevet med 'week' istedetfor 'Week'. Dette skal rettes når det er afklaret med gruppen, ellers skal det rettes i implementationen
  */
 public class TestClassifier {
   

@@ -15,21 +15,15 @@
  */ 
 package cs.rsa.ts14;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.*; 
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import java.util.Locale;
 
-import cs.rsa.ts14.bravo.BravoLineTypeClassifierStrategy;
-import cs.rsa.ts14.doubles.LineSequenceStateStub;
-import cs.rsa.ts14.doubles.SpyWorkloadBuilder;
-import cs.rsa.ts14.framework.ClassType;
-import cs.rsa.ts14.framework.LineSequenceState;
-import cs.rsa.ts14.framework.LineType;
-import cs.rsa.ts14.framework.LineTypeClassifierStrategy;
-import cs.rsa.ts14.framework.TimesagLineProcessor;
+import cs.rsa.ts14.doubles.*;
+import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
+import static org.junit.Assert.*; 
+import cs.rsa.ts14.bravo.BravoLineTypeClassifierStrategy;
 
 /** JUnit learning tests. 
  * 
@@ -77,7 +71,7 @@ public class TestTimesag {
         new StandardTimesagLineProcessor( classifier, builder, sequenceState );
   }
   
-  @Test 
+  @Test
   public void shouldAcceptEmptyLine() {
     line = "   ";
     LineType theLineType = processor.process(line);
@@ -91,7 +85,7 @@ public class TestTimesag {
     assertEquals(LineType.COMMENT_LINE, theLineType);
   }
   
-  @Test 
+  @Test
   public void shouldAcceptAssignmentLine() {
     line = "HoursOvertime = 390.2";
     assertEquals(-999.9, builder.getValueOfLastAssignment(), 0.001);
@@ -102,19 +96,19 @@ public class TestTimesag {
 
   @Test
   public void shouldAcceptValidWeekline() {
-    line = "Week 45 :  5 : 0";
+    line = "Week 2 :  5 : 0";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WEEK_SPECIFICATION, theLineType);
   }
  
-  @Test 
+  @Test
   public void shouldAcceptValidWorkline() {
-    line = "  n4c   -   2.5";
+    line = "  n4c   -   2";
     LineType theLineType = processor.process(line);
     assertEquals(LineType.WORK_SPECIFICATION, theLineType);
   }
 
-  @Test 
+  @Test
   public void shouldAcceptValidWeekdayline() {
     line = "Fri    Bi        8.30-16.30"; 
     LineType theLineType = processor.process(line);
@@ -122,7 +116,7 @@ public class TestTimesag {
     assertEquals( "No error", processor.lastError() );
   }
   
-  @Test @Ignore
+  @Test
   public void shouldAccumulate8HoursInWeek2() {
     processWeek2With8HoursWorkOnTaskN4C(); 
     
@@ -131,13 +125,18 @@ public class TestTimesag {
     assertEquals( 8.0, builder.getWeekData().hoursWorked, 0.001);
   }
   
-  @Test @Ignore
+  @Test
   public void shouldGenerateReportForWeek2() {
+    //create new Locale, to make sure the deciml point is '.' and not ','
+	Locale engLocale = new Locale("ENG");
+	
     processWeek2With8HoursWorkOnTaskN4C();
     processor.endProcess();
     String report = processor.getReport();
+	String testString = String.format(engLocale,"Week   %d :    %.1f hours   (  %d Wdays of   %.1f  d=%.1f)", 2, 8.0, 5, 8.0, -29.4);
     //             Week   1 :   14.5 hours   (  2 Wdays of   7.3  d=501.9)
-    assertEquals( "Week   2 :    8,0 hours   (  5 Wdays of   8,0  d=-29,4)", report );  
+    //assertEquals( "Week   2 :    8,0 hours   (  5 Wdays of   8,0  d=-29,4)", report );  
+    assertEquals( testString, report );  
   }
 
   private void processWeek2With8HoursWorkOnTaskN4C() {
@@ -151,7 +150,7 @@ public class TestTimesag {
     processor.process(line);
   }
   
-  @Test @Ignore
+  @Test
   public void shouldClassifyIntoClasses() {
     line = "  n4c   -   2";
     processor.process(line);
