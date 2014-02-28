@@ -17,10 +17,13 @@ package cs.rsa.ts14;
 
 import org.junit.*; 
 
+import java.util.Locale;
+
 import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
 import static org.junit.Assert.*; 
+import cs.rsa.ts14.bravo.BravoLineTypeClassifierStrategy;
 
 /** JUnit learning tests. 
  * 
@@ -60,7 +63,8 @@ public class TestTimesag {
     // As builder, we use a partial implementation
     //
     builder = new SpyWorkloadBuilder();
-    classifier = new FaultyLineTypeClassifierStrategy();
+    //classifier = new FaultyLineTypeClassifierStrategy();
+    classifier = new BravoLineTypeClassifierStrategy();
     sequenceState = new LineSequenceStateStub();
     // Configure the standard TS14 line processor
     processor = 
@@ -126,8 +130,10 @@ public class TestTimesag {
     processWeek2With8HoursWorkOnTaskN4C();
     processor.endProcess();
     String report = processor.getReport();
+	String testString = String.format(new Locale("ENG"),"Week   %d :    %.1f hours   (  %d Wdays of   %.1f  d=%.1f)", 2, 8.0, 5, 8.0, -29.4);
     //             Week   1 :   14.5 hours   (  2 Wdays of   7.3  d=501.9)
-    assertEquals( "Week   2 :    8,0 hours   (  5 Wdays of   8,0  d=-29,4)", report );  
+    //assertEquals( "Week   2 :    8,0 hours   (  5 Wdays of   8,0  d=-29,4)", report );  
+    assertEquals( testString, report );  
   }
 
   private void processWeek2With8HoursWorkOnTaskN4C() {

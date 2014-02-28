@@ -77,7 +77,7 @@ public class SpyWorkloadBuilder implements ReportBuilder {
   
   @Override
   public String getResult() {
-    String result = String.format(new Locale("DA"),"Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
+    String result = String.format(new Locale("ENG"),"Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
         thisWeek.weekNumber, thisWeek.hoursWorked, thisWeek.workDays, 8.0, -29.4 );
     return result;
   }
