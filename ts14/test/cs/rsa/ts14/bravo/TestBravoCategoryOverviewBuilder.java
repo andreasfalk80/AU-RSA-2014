@@ -154,8 +154,54 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildWorkSpecification("saip", "-", 5);
 		builder.buildWorkSpecification("terna", "-", 8.5);
 		builder.buildEnd();
-	//	System.err.println(builder.getResult());
-		assertEquals("Total:                     5.0 (13.5)",getBuilderResultLine(18)); 
+//		System.err.println(builder.getResult());		
+		assertEquals("-- Time spent on classes and categories --",getBuilderResultLine(1));
+		assertEquals("teaching                   5.0 (100%)",getBuilderResultLine(2));
+		assertEquals("    saip     :     5.0",getBuilderResultLine(3)); 
+		assertEquals("    censor   :     0.0",getBuilderResultLine(4));
+		assertEquals("    sa       :     0.0",getBuilderResultLine(5));
+		assertEquals("    mtt      :     0.0",getBuilderResultLine(6));
+		assertEquals("research                   0.0 (  0%)",getBuilderResultLine(7));
+		assertEquals("    es       :     0.0",getBuilderResultLine(8));
+		assertEquals("    book2    :     0.0",getBuilderResultLine(9));
+		assertEquals("    n4c      :     0.0",getBuilderResultLine(10));
+		assertEquals("misc                       0.0 (  0%)",getBuilderResultLine(11));
+		assertEquals("    syg      :     0.0",getBuilderResultLine(12));
+		assertEquals("consulent                  8.5 (170%)",getBuilderResultLine(13));
+		assertEquals("    terna    :     8.5",getBuilderResultLine(14));
+		assertEquals("adm                        0.0 (  0%)",getBuilderResultLine(15));
+		assertEquals("    itevmd   :     0.0",getBuilderResultLine(16));
+		assertEquals("    adm      :     0.0",getBuilderResultLine(17));
+		assertEquals("Total:                     5.0 (13.5)",getBuilderResultLine(18));
+		assertEquals("                          ===============",getBuilderResultLine(19));
+		 
+	}
+	
+	@Test
+	public void Test4DigitNumbers() {
+		builder.buildWorkSpecification("saip", "-", 5000);
+		builder.buildEnd();
+		System.err.println(builder.getResult());		
+		assertEquals("-- Time spent on classes and categories --",getBuilderResultLine(1));
+		assertEquals("teaching                5000.0 (100%)",getBuilderResultLine(2));
+		assertEquals("    saip     :  5000.0",getBuilderResultLine(3)); 
+		assertEquals("    censor   :     0.0",getBuilderResultLine(4));
+		assertEquals("    sa       :     0.0",getBuilderResultLine(5));
+		assertEquals("    mtt      :     0.0",getBuilderResultLine(6));
+		assertEquals("research                   0.0 (  0%)",getBuilderResultLine(7));
+		assertEquals("    es       :     0.0",getBuilderResultLine(8));
+		assertEquals("    book2    :     0.0",getBuilderResultLine(9));
+		assertEquals("    n4c      :     0.0",getBuilderResultLine(10));
+		assertEquals("misc                       0.0 (  0%)",getBuilderResultLine(11));
+		assertEquals("    syg      :     0.0",getBuilderResultLine(12));
+		assertEquals("consulent                  0.0 (  0%)",getBuilderResultLine(13));
+		assertEquals("    terna    :     0.0",getBuilderResultLine(14));
+		assertEquals("adm                        0.0 (  0%)",getBuilderResultLine(15));
+		assertEquals("    itevmd   :     0.0",getBuilderResultLine(16));
+		assertEquals("    adm      :     0.0",getBuilderResultLine(17));
+		assertEquals("Total:                  5000.0 (5000.0)",getBuilderResultLine(18));
+		assertEquals("                          ===============",getBuilderResultLine(19));
+		 
 	}
 
 	
@@ -163,21 +209,29 @@ public class TestBravoCategoryOverviewBuilder {
 	public void TestInvalidCategory() {
 		builder.buildWorkSpecification("invalid", "-", 1);
 		builder.buildEnd();
-//		System.err.println(builder.getResult());
-		assertEquals("Unknown category found: \"invalid\". The record was ignored.",getBuilderResultLine(20));
+	//	System.err.println(builder.getResult());
+		assertEquals("-- Time spent on classes and categories --",getBuilderResultLine(1));
+		assertEquals("teaching                   0.0 (  0%)",getBuilderResultLine(2));
+		assertEquals("    saip     :     0.0",getBuilderResultLine(3)); 
+		assertEquals("    censor   :     0.0",getBuilderResultLine(4));
+		assertEquals("    sa       :     0.0",getBuilderResultLine(5));
+		assertEquals("    mtt      :     0.0",getBuilderResultLine(6));
+		assertEquals("research                   0.0 (  0%)",getBuilderResultLine(7));
+		assertEquals("    es       :     0.0",getBuilderResultLine(8));
+		assertEquals("    book2    :     0.0",getBuilderResultLine(9));
+		assertEquals("    n4c      :     0.0",getBuilderResultLine(10));
+		assertEquals("misc                       0.0 (  0%)",getBuilderResultLine(11));
+		assertEquals("    syg      :     0.0",getBuilderResultLine(12));
+		assertEquals("consulent                  0.0 (  0%)",getBuilderResultLine(13));
+		assertEquals("    terna    :     0.0",getBuilderResultLine(14));
+		assertEquals("adm                        0.0 (  0%)",getBuilderResultLine(15));
+		assertEquals("    itevmd   :     0.0",getBuilderResultLine(16));
+		assertEquals("    adm      :     0.0",getBuilderResultLine(17));
+		assertEquals("Total:                     0.0 (0.0)",getBuilderResultLine(18));
+		assertEquals("                          ===============",getBuilderResultLine(19));
 
 	}
 	
-		@Test
-	public void TestNegativeHourValue() {
-		builder.buildWorkSpecification("saip", "-", -5);
-		builder.buildEnd();
-		//System.err.println(builder.getResult());
-		assertEquals("Illegal value for hours found: \"-5.0\". The record was ignored.",getBuilderResultLine(20)); 
-
-	}
-
-
 		@Test
 	public void TestAllCategories() {
 		builder.buildWorkSpecification("saip", "-", 1);
@@ -192,18 +246,24 @@ public class TestBravoCategoryOverviewBuilder {
 		builder.buildWorkSpecification("itevmd", "-", 10);
 		builder.buildWorkSpecification("adm", "-", 11);
 		builder.buildEnd();
-	//	System.err.println(builder.getResult());
+//		System.err.println(builder.getResult());
+		assertEquals("teaching                  10.0 ( 18%)",getBuilderResultLine(2));
 		assertEquals("    saip     :     1.0",getBuilderResultLine(3)); 
 		assertEquals("    censor   :     2.0",getBuilderResultLine(4));
 		assertEquals("    sa       :     3.0",getBuilderResultLine(5));
 		assertEquals("    mtt      :     4.0",getBuilderResultLine(6));
+		assertEquals("research                  18.0 ( 32%)",getBuilderResultLine(7));
 		assertEquals("    es       :     5.0",getBuilderResultLine(8));
 		assertEquals("    book2    :     6.0",getBuilderResultLine(9));
 		assertEquals("    n4c      :     7.0",getBuilderResultLine(10));
+		assertEquals("misc                       8.0 ( 14%)",getBuilderResultLine(11));
 		assertEquals("    syg      :     8.0",getBuilderResultLine(12));
+		assertEquals("consulent                  9.0 ( 16%)",getBuilderResultLine(13));
 		assertEquals("    terna    :     9.0",getBuilderResultLine(14));
+		assertEquals("adm                       21.0 ( 37%)",getBuilderResultLine(15));
 		assertEquals("    itevmd   :    10.0",getBuilderResultLine(16));
 		assertEquals("    adm      :    11.0",getBuilderResultLine(17));
+		assertEquals("Total:                    57.0 (66.0)",getBuilderResultLine(18));
 	}
 
 		@Test
