@@ -83,17 +83,10 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
 		// check that the category is known, otherwise just ignore
 		if (classType != null) {
 			// Add hours to work category
-			if (workCategoryToHoursMap.containsKey(category)) {
-				double workCategoryHours = hours;
-				workCategoryHours += workCategoryToHoursMap.get(category);
-				workCategoryToHoursMap.put(category, workCategoryHours);
-			}
-			// Add hours to work class
-			if (workClassToHoursMap.containsKey(classType)) {
-				double workClassHours = hours;
-				workClassHours += workClassToHoursMap.get(classType);
-				workClassToHoursMap.put(classType, workClassHours);
-			}
+			double workCategoryHours = hours + workCategoryToHoursMap.get(category);
+			workCategoryToHoursMap.put(category, workCategoryHours);
+			double workClassHours = hours + workClassToHoursMap.get(classType);
+			workClassToHoursMap.put(classType, workClassHours);
 
 			// Add hours to total work hours
 			totalWorkHours += hours;
@@ -165,20 +158,7 @@ public class BravoCategoryOverviewBuilder implements ReportBuilder {
 	}
 
 	private String getClassString(ClassType classType) {
-		switch (classType) {
-			case TEACHING :
-				return "teaching";
-			case RESEARCH :
-				return "research";
-			case MISC :
-				return "misc";
-			case CONSULENT :
-				return "consulent";
-			case ADM :
-				return "adm";
-			default :
-				return "unknown class";
-		}
+		return classType.toString().toLowerCase();
 	}
 
 }
