@@ -16,6 +16,8 @@
 
 package cs.rsa.ts14.doubles;
 
+import java.util.Locale;
+
 import cs.rsa.ts14.framework.ClassType;
 import cs.rsa.ts14.framework.ReportBuilder;
 import cs.rsa.ts14.standard.ClassMap;
@@ -75,7 +77,7 @@ public class SpyWorkloadBuilder implements ReportBuilder {
   
   @Override
   public String getResult() {
-    String result = String.format("Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
+    String result = String.format(new Locale("ENG"),"Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
         thisWeek.weekNumber, thisWeek.hoursWorked, thisWeek.workDays, 8.0, -29.4 );
     return result;
   }

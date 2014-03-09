@@ -32,13 +32,13 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 	private static String weekNumbersPattern = "([1-9]|[1-4][0-9]|[5][0-3])";
 	//matcher a-z ikke casesensitive
 	private static String lettersPattern = "[a-zA-Z]";
-	//matcher vilk�rligt tal, hvor decimalpoint og et ciffer efter er valgfrit. Ingen gr�nse for antal cifre f�r decimalpoint
-	private static String decimal_n_1_Pattern = "(\\d+|0)(\\.\\d+)?"; //n angiver antal f�r 1 antal efter decimalpoint 
+	//matcher vilkårligt tal, hvor decimalpoint og et ciffer efter er valgfrit. Ingen grænse for antal cifre før decimalpoint
+	private static String decimal_n_1_Pattern = "(\\d+|0)(\\.\\d+)?"; //n angiver antal før 1 antal efter decimalpoint 
 	//matcher kort notation for ugedage 
 	private static String weekdaysShortPattern = "(Mon|Tue|Wed|Thu|Fri|Sat|Sun)"; 
 	//matcher ord der starter med et bogstav, og derefter kan indeholde hvad som helst 
 	private static String wordsStartingWithLetterPattern = lettersPattern+"\\w*"; 
-	//matcher  0-24 i intervaller p� 0.5. mind 0.5 maks 24 Eksempler: , 0.5 , 1.5 , 5.0 , 5 , 23.5 , 24 , 24.0
+	//matcher  0-24 i intervaller på 0.5. mind 0.5 maks 24 Eksempler: , 0.5 , 1.5 , 5.0 , 5 , 23.5 , 24 , 24.0
 	private static String everyHalfHourInADayPattern = "((0\\.5)|(([1-9]|1[0-9]|2[0-3])(\\.[05])?)|(24(\\.[0])?))"; 
 	
 	
@@ -82,7 +82,7 @@ public class BravoLineTypeClassifierStrategy implements LineTypeClassifierStrate
 		
 		// Week specification line: Test if sum of work days and holidays > 5
 		if(lastSeen.equals(LineType.WEEK_SPECIFICATION)) {
-			String[] sArray = line.trim().split(" ");
+			String[] sArray = line.trim().split("\\s+");
 			int workDays = Integer.parseInt(sArray[3]);
 			int holidays = Integer.parseInt(sArray[5]);
 			if (workDays + holidays > 5)
