@@ -2,6 +2,7 @@ package cs.rsa.ts14.bravo;
 
 import static org.junit.Assert.assertEquals;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,27 +38,27 @@ public class TestLineProcessor {
 
 	@Test
 	public void shouldHandleTypicalValidSequencePartially() {
-		assertEquals(InitialState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof InitialState);
 
 		// Can transition to assignment
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(AssignmentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof AssignmentState);
 
 		// Can transition to comment
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 
 		// Can transition to Week
 		tlp.process(WEEK_SPECIFICATION);
-		assertEquals(WeekState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekState);
 
 		// On to Weekday
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(WeekDayState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekDayState);
 
 		// On to a work line
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(WorkState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WorkState);
 
 	}
 
@@ -68,31 +69,35 @@ public class TestLineProcessor {
 
 		// Try transition into assignment
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 		assertEquals("Illegal to have assignment after week line.",
 				tlp.getState().lastError());
 	}
 
 	@Test
 	public void shouldNotTransitionFromWeekDayToAssignment() {
+		tlp.process(WEEK_SPECIFICATION);
+		
 		// set the state to Week
 		tlp.process(WEEKDAY_SPECIFICATION);
 
 		// Try transition into assignment
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 		assertEquals("Illegal to have assignment after weekday line.",
 				tlp.getState().lastError());
 	}
 
 	@Test
 	public void shouldNotTransitionFromWorkToAssignment() {
-		// set the state to Week
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
+		// set the state to Work
 		tlp.process(WORK_SPECIFICATION);
 
 		// Try transition into assignment
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 		assertEquals("Illegal to have assignment after work line.",
 				tlp.getState().lastError());
 	}
@@ -101,7 +106,7 @@ public class TestLineProcessor {
 	public void shouldAllowOneEmptyLines() {
 		// Accept 1st empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 
 	}
 
@@ -109,11 +114,11 @@ public class TestLineProcessor {
 	public void shouldAllowTwoEmptyLines() {
 		// Accept 1st empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 
 		// Accept 2nd empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 
 	}
 
@@ -121,15 +126,15 @@ public class TestLineProcessor {
 	public void shouldNotAllowThreeEmptyLines() {
 		// Accept 1st empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 
 		// Accept 2nd empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 
 		// Reject 3rd empty line
 		tlp.process(EMPTY_LINE);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 		assertEquals("Illegal to have three consecutive empty lines.",
 				tlp.getState().lastError());
 	}
@@ -141,7 +146,7 @@ public class TestLineProcessor {
 
 		tlp.process(ASSIGNMENT_LINE);
 		tlp.process(WEEK_SPECIFICATION);
-		assertEquals(WeekState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekState);
 
 	}
 
@@ -150,7 +155,7 @@ public class TestLineProcessor {
 
 		tlp.process(ASSIGNMENT_LINE);
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(AssignmentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof AssignmentState);
 	}
 
 	@Test
@@ -158,7 +163,7 @@ public class TestLineProcessor {
 
 		tlp.process(ASSIGNMENT_LINE);
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 	}
 
 	@Test
@@ -166,7 +171,7 @@ public class TestLineProcessor {
 
 		tlp.process(ASSIGNMENT_LINE);
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 
 	}
 
@@ -175,7 +180,7 @@ public class TestLineProcessor {
 
 		tlp.process(ASSIGNMENT_LINE);
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 
 	}
 
@@ -186,7 +191,7 @@ public class TestLineProcessor {
 
 		tlp.process(WEEK_SPECIFICATION);
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 	}
 
 	@Test
@@ -194,7 +199,7 @@ public class TestLineProcessor {
 
 		tlp.process(WEEK_SPECIFICATION);
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 	}
 
 	@Test
@@ -202,7 +207,7 @@ public class TestLineProcessor {
 
 		tlp.process(WEEK_SPECIFICATION);
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 
 	}
 
@@ -210,60 +215,72 @@ public class TestLineProcessor {
 
 	@Test
 	public void shouldAllowCommentFromWeekday() {
+		tlp.process(WEEK_SPECIFICATION);
 		
 		tlp.process(WEEKDAY_SPECIFICATION);
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 	}
 
 	@Test
 	public void shouldAllowEmptyFromWeekday() {
-
+		tlp.process(WEEK_SPECIFICATION);
+		
 		tlp.process(WEEKDAY_SPECIFICATION);
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 	}
 
 	// Test for transitions from workstate
 
 	@Test
 	public void shouldAllowCommentFromWork() {
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
 		
 		tlp.process(WORK_SPECIFICATION);
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 	}
 
 	@Test
 	public void shouldAllowEmptyFromWork() {
-
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
+		
 		tlp.process(WORK_SPECIFICATION);
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 	}
 
 	@Test
 	public void shouldAllowWeekFromWork() {
-
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
+		
 		tlp.process(WORK_SPECIFICATION);
 		tlp.process(WEEK_SPECIFICATION);
-		assertEquals(WeekState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekState);
 	}
 
 	@Test
 	public void shouldAllowWeekdayFromWork() {
-
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
+		
 		tlp.process(WORK_SPECIFICATION);
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(WeekDayState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekDayState);
 	}
 
 	@Test
 	public void shouldAllowWorkFromWork() {
-
+		tlp.process(WEEK_SPECIFICATION);
+		tlp.process(WEEKDAY_SPECIFICATION);
+		
 		tlp.process(WORK_SPECIFICATION);
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(WorkState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WorkState);
 	}
 
 	// Test for transitions from commentstate
@@ -273,7 +290,7 @@ public class TestLineProcessor {
 
 		tlp.process(COMMENT_LINE);
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 
 	}
 
@@ -282,7 +299,7 @@ public class TestLineProcessor {
 
 		tlp.process(COMMENT_LINE);
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(AssignmentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof AssignmentState);
 	}
 
 	@Test
@@ -290,7 +307,7 @@ public class TestLineProcessor {
 
 		tlp.process(COMMENT_LINE);
 		tlp.process(EMPTY_LINE);
-		assertEquals(EmptyState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof EmptyState);
 	}
 
 	@Test
@@ -298,7 +315,7 @@ public class TestLineProcessor {
 
 		tlp.process(COMMENT_LINE);
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(WeekDayState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekDayState);
 	}
 
 	@Test
@@ -306,7 +323,7 @@ public class TestLineProcessor {
 
 		tlp.process(COMMENT_LINE);
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(WorkState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WorkState);
 	}
 
 	// Test for transitions from intialstate
@@ -316,7 +333,7 @@ public class TestLineProcessor {
 
 		setup();
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 	}
 
 	@Test
@@ -324,14 +341,14 @@ public class TestLineProcessor {
 
 		setup();
 		tlp.process(WEEK_SPECIFICATION);
-		assertEquals(WeekState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekState);
 	}
 
 	@Test
 	public void shouldNotAllowWeekdayFromInitial() {
 		setup();
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(IllegalState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 
 	}
 
@@ -339,8 +356,7 @@ public class TestLineProcessor {
 	public void shouldNotAllowWorkFromInitial() {
 		setup();
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(IllegalState.class, tlp.getState());
-
+		Assert.assertTrue(tlp.getState() instanceof IllegalState);
 	}
 
 	// Test for transitions from emptystate
@@ -350,7 +366,7 @@ public class TestLineProcessor {
 		
 		tlp.process(EMPTY_LINE);
 		tlp.process(ASSIGNMENT_LINE);
-		assertEquals(AssignmentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof AssignmentState);
 	}
 
 	@Test
@@ -359,7 +375,7 @@ public class TestLineProcessor {
 		tlp.process(EMPTY_LINE);
 		tlp.process(EMPTY_LINE);
 		tlp.process(COMMENT_LINE);
-		assertEquals(CommentState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof CommentState);
 	}
 
 	@Test
@@ -367,7 +383,7 @@ public class TestLineProcessor {
 
 		tlp.process(EMPTY_LINE);
 		tlp.process(WEEK_SPECIFICATION);
-		assertEquals(WeekState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekState);
 
 	}
 
@@ -376,7 +392,7 @@ public class TestLineProcessor {
 
 		tlp.process(EMPTY_LINE);
 		tlp.process(WEEKDAY_SPECIFICATION);
-		assertEquals(WeekDayState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WeekDayState);
 
 	}
 
@@ -385,7 +401,7 @@ public class TestLineProcessor {
 
 		tlp.process(EMPTY_LINE);
 		tlp.process(WORK_SPECIFICATION);
-		assertEquals(WorkState.class, tlp.getState());
+		Assert.assertTrue(tlp.getState() instanceof WorkState);
 
 	}
 }
