@@ -20,7 +20,6 @@ import java.util.StringTokenizer;
 
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.Golf.statemachine.IllegalState;
-import cs.rsa.ts14.bravo.*;
 
 /** Default framework implementation of the TimesagLineProcessor. The
  * line type classifier and the report builder are hotspots.
