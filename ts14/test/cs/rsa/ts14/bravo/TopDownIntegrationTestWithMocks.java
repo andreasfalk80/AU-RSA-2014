@@ -30,12 +30,15 @@ public class TopDownIntegrationTestWithMocks {
     // the Mockito library to genereate mock objects
     TimesagLineProcessor tlpMock = mock(TimesagLineProcessor.class);
     when(tlpMock.lastError()).thenReturn("No error");
+    when(tlpMock.getReport()).thenReturn("tlpMock dummy");
     
     File file = new File("resource/timesag.txt");
 
+    String resultString = new String("");
+    
     try {
       TimesagEngine timesagEngineUnderTest = new TimesagEngine();
-      timesagEngineUnderTest.getTimesagReport(file, tlpMock);
+      resultString = timesagEngineUnderTest.getTimesagReport(file, tlpMock);
     } catch (IOException e) {
       System.err.println("Caught IOException: " + e.getMessage());
     }
@@ -49,6 +52,29 @@ public class TopDownIntegrationTestWithMocks {
     verify(tlpMock).endProcess();
     verify(tlpMock).lastError();
     verify(tlpMock).getReport();
+    assertEquals(resultString, "tlpMock dummy");
+  }
+
+  @Test
+  public void topDownIntegrationTestStage1Error() {
+    
+    // Instead of defining stubs and spies, we ask
+    // the Mockito library to genereate mock objects
+    TimesagLineProcessor tlpMock = mock(TimesagLineProcessor.class);
+    when(tlpMock.lastError()).thenReturn("Integration test error");
+    when(tlpMock.getReport()).thenReturn("tlpMock dummy report");
+    
+    File file = new File("resource/timesag.txt");
+
+    String resultString = new String("");
+    
+    try {
+      TimesagEngine timesagEngineUnderTest = new TimesagEngine();
+      resultString = timesagEngineUnderTest.getTimesagReport(file, tlpMock);
+    } catch (IOException e) {
+      System.err.println("Caught IOException: " + e.getMessage());
+    }
+    assertEquals(resultString, "Error in input: Integration test error");
   }
 
   @Test
