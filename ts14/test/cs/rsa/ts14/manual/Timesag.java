@@ -26,6 +26,7 @@ import cs.rsa.ts14.standard.TimesagEngine;
 import cs.rsa.ts14.bravo.*;
 import cs.rsa.ts14.charlie.*;
 import cs.rsa.ts14.delta.*;
+import cs.rsa.ts14.Golf.statemachine.*;
 
 /** A command line processor that reads a timesag file and
  * outputs the required report.
@@ -68,7 +69,7 @@ public class Timesag {
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
             builder, 
-            new LineSequenceStateStub());
+            new InitialState());
     
     TimesagEngine engine = new TimesagEngine();
     
