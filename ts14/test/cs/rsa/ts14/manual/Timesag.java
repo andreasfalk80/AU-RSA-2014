@@ -17,11 +17,13 @@
 package cs.rsa.ts14.manual;
 
 import java.io.*;
+
 import org.apache.commons.io.*;
 
 import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
+import cs.rsa.ts14.Golf.statemachine.InitialState;
 import cs.rsa.ts14.bravo.*;
 
 /** A command line processor that reads a timesag file and
@@ -53,7 +55,7 @@ public class Timesag {
     // classifier based upon the W,C,T parameter on the
     // command line
     ReportBuilder builder = new BravoCategoryOverviewBuilder();
-    LineSequenceState sequenceState = new LineSequenceStateStub();
+    LineSequenceState sequenceState = new InitialState();
     TimesagLineProcessor tlp = 
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
