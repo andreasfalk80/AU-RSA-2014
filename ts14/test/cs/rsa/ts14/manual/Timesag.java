@@ -17,14 +17,16 @@
 package cs.rsa.ts14.manual;
 
 import java.io.*;
-
 import org.apache.commons.io.*;
 
 import cs.rsa.ts14.doubles.*;
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
-import cs.rsa.ts14.Golf.statemachine.InitialState;
+import cs.rsa.ts14.standard.TimesagEngine;
+mport cs.rsa.ts14.Golf.statemachine.InitialState;
 import cs.rsa.ts14.bravo.*;
+import cs.rsa.ts14.charlie.*;
+import cs.rsa.ts14.delta.*;
 
 /** A command line processor that reads a timesag file and
  * outputs the required report.
@@ -48,38 +50,30 @@ public class Timesag {
     String reportTypeString = args[0];
     File file = new File(args[1]);
 
-    // Configure the Timesag processor based upon
-    // report type string.
-    
-    // TODO: introduce the proper builder and line type
-    // classifier based upon the W,C,T parameter on the
-    // command line
-    ReportBuilder builder = new BravoCategoryOverviewBuilder();
-    LineSequenceState sequenceState = new InitialState();
+    // Configure the Timesag processor based upon report type string.
+    ReportBuilder builder;
+    if(args[0].equals("C"))
+    {
+      builder = new BravoCategoryOverviewBuilder(); // bravo
+    }
+    else if(args[0].equals("W"))
+    {
+      builder = new WeeklyOverviewReportBuilder(); // charlie
+    }
+    else
+    {
+      builder = new TransportReportBuilder(); // delta
+    }
+	LineSequenceState sequenceState = new InitialState();
     TimesagLineProcessor tlp = 
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
-            builder, sequenceState );
-        
-    // Create an iterator for the lines in the file
-    LineIterator it = FileUtils.lineIterator(file, "UTF-8");
-    tlp.beginProcess();
-    try {
-      while (it.hasNext()) {
-        // process each line
-        String line = it.nextLine();
-        LineType linetype = tlp.process( line );
-        if ( linetype == LineType.INVALID_LINE ) {
-          System.out.println("Error in file: " + tlp.lastError() );
-          System.exit(-1);
-        }
-      }
-    } finally {
-      LineIterator.closeQuietly(it);
-    }
-    tlp.endProcess();
-    // Aske the builder for the final report and print it.
-    System.out.println(builder.getResult());
+            builder, 
+            new sequenceState);
+    
+    TimesagEngine engine = new TimesagEngine();
+    
+    System.out.print(engine.getTimesagReport(file, tlp));
   }
 }
         
