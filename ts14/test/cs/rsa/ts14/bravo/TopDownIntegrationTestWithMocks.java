@@ -30,7 +30,7 @@ public class TopDownIntegrationTestWithMocks {
     // the Mockito library to genereate mock objects
     TimesagLineProcessor tlpMock = mock(TimesagLineProcessor.class);
     when(tlpMock.lastError()).thenReturn("No error");
-    when(tlpMock.getReport()).thenReturn("tlpMock dummy");
+    when(tlpMock.getReport()).thenReturn("tlpMock dummy report");
     
     File file = new File("resource/timesag.txt");
 
@@ -52,7 +52,7 @@ public class TopDownIntegrationTestWithMocks {
     verify(tlpMock).endProcess();
     verify(tlpMock).lastError();
     verify(tlpMock).getReport();
-    assertEquals(resultString, "tlpMock dummy");
+    assertEquals(resultString, "tlpMock dummy report");
   }
 
   @Test
@@ -83,8 +83,12 @@ public class TopDownIntegrationTestWithMocks {
     // Instead of defining stubs and spies, we ask
     // the Mockito library to genereate mock objects
     ReportBuilder builderMock = mock(ReportBuilder.class);
+    when(builderMock.getResult()).thenReturn("builderMock dummy report");
     
     File file = new File("resource/timesag.txt");
+
+    String resultString = new String("");
+
     TimesagLineProcessor tlp = 
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
@@ -93,7 +97,7 @@ public class TopDownIntegrationTestWithMocks {
     
     try {
       TimesagEngine engine = new TimesagEngine();
-      engine.getTimesagReport(file, tlp);
+      resultString = engine.getTimesagReport(file, tlp);
     } catch (IOException e) {
       System.err.println("Caught IOException: " + e.getMessage());
     }
@@ -104,6 +108,7 @@ public class TopDownIntegrationTestWithMocks {
     verify(builderMock).buildAssignment("Year", 2013.0);
     verify(builderMock).buildEnd();
     verify(builderMock).getResult();
+    assertEquals(resultString, "builderMock dummy report");
   }
 
   @Test
