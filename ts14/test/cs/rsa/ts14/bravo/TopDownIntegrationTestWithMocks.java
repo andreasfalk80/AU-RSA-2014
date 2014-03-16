@@ -6,6 +6,7 @@ import cs.rsa.ts14.delta.*;
 import org.junit.*;
 import org.mockito.InOrder;
 
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -114,10 +115,10 @@ public class TopDownIntegrationTestWithMocks {
   @Test
   public void topDownIntegrationTestStage3CharlieWeeklyOverview() {
     String testOracleString = new String(
-"=== Week Overview ===\r\n"+
-"Week   1 :   22.0 hours   (  3 Wdays of   7.3  d=502.0)\r\n"+
-"Week   2 :   40.5 hours   (  5 Wdays of   8.1  d=505.5)\r\n"+
-"Week   3 :    7.0 hours   (  5 Wdays of   1.4  d=475.5)\r\n");
+"=== Week Overview ==="+System.getProperty("line.separator")+
+"Week   1 :   22.0 hours   (  3 Wdays of   7.3  d=502.0)"+System.getProperty("line.separator")+
+"Week   2 :   40.5 hours   (  5 Wdays of   8.1  d=505.5)"+System.getProperty("line.separator")+
+"Week   3 :    7.0 hours   (  5 Wdays of   1.4  d=475.5)"+System.getProperty("line.separator"));
 
     String testResultString = new String("");
 
@@ -141,10 +142,10 @@ public class TopDownIntegrationTestWithMocks {
   @Test
   public void topDownIntegrationTestStage3DeltaTransportOverview() {
     String testOracleString = new String(
-"-------------------------------------------------------------------------\n"+
-"| Car:     7     Bicycle:    0     Public:     0    Traveling:    0     |\n"+
-"| Home:    1    NonWDays:    2     Unknown:    0                        |\n"+
-"-------------------------------------------------------------------------");
+"-------------------------------------------------------------------------"+System.getProperty("line.separator")+
+"| Car:     7     Bicycle:    0     Public:     0    Traveling:    0     |"+System.getProperty("line.separator")+
+"| Home:    1    NonWDays:    2     Unknown:    0                        |"+System.getProperty("line.separator")+
+"-------------------------------------------------------------------------"+System.getProperty("line.separator"));
 
     String testResultString = new String("");
     
