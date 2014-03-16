@@ -1,5 +1,7 @@
 package cs.rsa.ts14.charlie;
 
+import java.util.Properties;
+
 import cs.rsa.ts14.framework.ClassType;
 import cs.rsa.ts14.standard.ClassMap;
 import cs.rsa.ts14.framework.ReportBuilder;
@@ -63,7 +65,8 @@ public class WeeklyOverviewReportBuilder implements ReportBuilder {
 	@Override
 	public String getResult() {
 		StringBuffer output = new StringBuffer();
-		output.append("=== Week Overview ===\r\n");
+		output.append("=== Week Overview ===");
+    output.append(System.getProperty("line.separator"));
 		double delta = overtime;
 		for (int i=0; i < weeks.length; i++) {
 			if (weeks[i].containsRegistration) {
@@ -72,8 +75,9 @@ public class WeeklyOverviewReportBuilder implements ReportBuilder {
 					average = (weeks[i].hours / weeks[i].workDays);
 				}
 				delta = delta + (weeks[i].hours - (37.0*(weeks[i].workDays/5.0)));
-				output.append(String.format("Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)\r\n", 
+				output.append(String.format("Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
 				        (i+1), weeks[i].hours, weeks[i].workDays, average, delta));
+        output.append(System.getProperty("line.separator"));
 			}
 		}
 		return output.toString();

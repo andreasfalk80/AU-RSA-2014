@@ -43,15 +43,15 @@ public class TransportReportBuilder implements ReportBuilder {
     @Override
     public String getResult() {
         String line = String.format("%73s", "").replace(' ', '-');
-        return String.format(line + "\n" +
+        return String.format(line + System.getProperty("line.separator") +
                 "| Car:%6s%5s" +
                 "Bicycle:%5s%5s" +
                 "Public:%6s%4s" +
-                "Traveling:%5s%5s|\n" +
+                "Traveling:%5s%5s|" + System.getProperty("line.separator") + 
                 "| Home:%5s%4s" +
                 "NonWDays:%5s%5s" +
-                "Unknown:%5s%24s|\n" +
-                line,
+                "Unknown:%5s%24s|" + System.getProperty("line.separator") + 
+                line + System.getProperty("line.separator"),
                 transport.get("Ca"), "",
                 transport.get("Bi"), "",
                 transport.get("Pu"), "",
