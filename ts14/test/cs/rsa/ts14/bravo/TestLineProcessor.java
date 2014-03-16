@@ -14,6 +14,7 @@ import cs.rsa.ts14.Golf.statemachine.InitialState;
 import cs.rsa.ts14.Golf.statemachine.WeekDayState;
 import cs.rsa.ts14.Golf.statemachine.WeekState;
 import cs.rsa.ts14.Golf.statemachine.WorkState;
+import cs.rsa.ts14.doubles.ReportBuilderStub;
 import cs.rsa.ts14.framework.TimesagLineProcessor;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
 
@@ -32,7 +33,7 @@ public class TestLineProcessor {
 	public void setup() {
 		tlp = new StandardTimesagLineProcessor(
 				new BravoLineTypeClassifierStrategy(),
-				new BravoCategoryOverviewBuilder(), new InitialState());
+				new ReportBuilderStub(), new InitialState());
 		tlp.beginProcess();
 	}
 

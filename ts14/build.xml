@@ -158,6 +158,26 @@ TS14 project / Reliable Software and Architecture - Mandatory project
     </jacoco:coverage>
   </target>
 
+  <target name="run.junit2" depends="build-all">
+	    <jacoco:coverage destfile="${jacoco.exec}" >
+	      <junit printsummary="yes" fork="yes" 
+		     forkmode="once"
+		     haltonfailure="yes">
+		<formatter type="plain"/>
+		<batchtest fork="yes" todir="${test.output.directory}">
+		  <fileset dir="test">
+		    <include name="**/TestIntegrationClassifierLineprocessor.java"/>
+		  	<include name="**/TestLineProcessor.java"/>
+		  	<include name="**/TopDownIntegrationTestWithMocks.java"/>
+		  </fileset>
+		</batchtest>
+		<classpath refid="run.path.id"/>
+	      </junit>
+	    </jacoco:coverage>
+	  </target>
+
+	
+	
   <target name="coverage" depends="run.junit"
 	  description="--> Generate code coverage report in the report dir">
     <jacoco:report>
@@ -179,6 +199,28 @@ TS14 project / Reliable Software and Architecture - Mandatory project
     </jacoco:report>
     <echo message="To see report, browse to index.html at ${jacoco.report.dir}."/>
   </target>
+	
+  <target name="coverage_integration" depends="run.junit2"
+		  description="--> Generate code coverage report in the report dir">
+	    <jacoco:report>
+	      <executiondata>
+	        <file file="${jacoco.exec}"/>
+	      </executiondata>
+	      <structure name="TS14 Test" >
+	        <classfiles>
+	          <fileset dir="${build.dir}">
+		    <include name="**/*.class"/>
+		  </fileset>
+	        </classfiles>
+	        <sourcefiles encoding="UTF-8" tabwidth="2">
+		  <fileset dir="${src.dir}"/>
+		  <fileset dir="${test.dir}"/>
+	        </sourcefiles>
+	      </structure>
+	      <html destdir="${jacoco.report.dir}"/>
+	    </jacoco:report>
+	    <echo message="To see report, browse to index.html at ${jacoco.report.dir}."/>
+	  </target>
 
 
   <!-- execution -->
