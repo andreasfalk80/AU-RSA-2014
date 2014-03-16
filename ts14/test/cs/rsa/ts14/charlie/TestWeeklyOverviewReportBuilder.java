@@ -3,15 +3,19 @@ package cs.rsa.ts14.charlie;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Locale;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestWeeklyOverviewReportBuilder {
 
 	 private WeeklyOverviewReportBuilder builder;
+	 private Locale myLocale = new Locale("ENG");
 
 	 @Before
 	  public void setup() {
+		 
 		  builder = new WeeklyOverviewReportBuilder();
 	  }
 	  
@@ -22,7 +26,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildEnd();
 		  String result = builder.getResult();
 		  assertTrue(result.startsWith("=== Week Overview ==="));
-		  String expectedLine = String.format("Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
+		  String expectedLine = String.format(myLocale,"Week %3d : %6.1f hours   ( %2d Wdays of %5.1f  d=%3.1f)", 
 			        1,0.0,0,0.0,0.0);
 		  assertTrue(result.contains(expectedLine));
 	  }
@@ -50,7 +54,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("work", "work", 2.5);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedWork = String.format("%6.1f hours",7.5);
+		  String expectedWork = String.format(myLocale,"%6.1f hours",7.5);
 		  assertTrue(result.contains(expectedWork));
 	  }
 	  
@@ -62,7 +66,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("terna", "work", 2.5);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedWork = String.format("%6.1f hours",5.0);
+		  String expectedWork = String.format(myLocale,"%6.1f hours",5.0);
 		  assertTrue(result.contains(expectedWork));
 	  }
 	  
@@ -85,7 +89,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("work", "work", 5.5);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedAverage = String.format("of %5.1f", 4.3);
+		  String expectedAverage = String.format(myLocale,"of %5.1f", 4.3);
 		  assertTrue(result.contains(expectedAverage));
 	  }
 	  
@@ -98,7 +102,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("work", "work", 5.0);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedDelta = String.format("d=%3.1f", -7.2);
+		  String expectedDelta = String.format(myLocale,"d=%3.1f", -7.2);
 		  assertTrue(result.contains(expectedDelta));
 	  }
 	  
@@ -112,7 +116,7 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("work", "work", 5.0);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedDelta = String.format("d=%3.1f", 2.8);
+		  String expectedDelta = String.format(myLocale,"d=%3.1f", 2.8);
 		  assertTrue(result.contains(expectedDelta));
 	  }
 	  
@@ -129,8 +133,8 @@ public class TestWeeklyOverviewReportBuilder {
 		  builder.buildWorkSpecification("work", "work", 5.0);
 		  builder.buildEnd();
 		  String result = builder.getResult();
-		  String expectedDelta1 = String.format("d=%3.1f", -7.2);
-		  String expectedDelta2 = String.format("d=%3.1f", -14.4);
+		  String expectedDelta1 = String.format(myLocale,"d=%3.1f", -7.2);
+		  String expectedDelta2 = String.format(myLocale,"d=%3.1f", -14.4);
 		  assertTrue(result.contains(expectedDelta1));
 		  assertTrue(result.contains(expectedDelta2));
 		  assertTrue(result.indexOf(expectedDelta1) < result.indexOf(expectedDelta2));
