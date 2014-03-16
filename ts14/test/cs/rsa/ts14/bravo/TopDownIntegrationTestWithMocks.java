@@ -6,8 +6,6 @@ import cs.rsa.ts14.delta.*;
 import org.junit.*;
 import org.mockito.InOrder;
 
-import cs.rsa.ts14.framework.*;
-import cs.rsa.ts14.bravo.*;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -15,8 +13,10 @@ import static org.mockito.Mockito.*;
 import java.io.*;
 import org.apache.commons.io.*;
 
-import cs.rsa.ts14.doubles.*;
+import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.*;
+import cs.rsa.ts14.bravo.*;
+import cs.rsa.ts14.Golf.statemachine.*;
 
 public class TopDownIntegrationTestWithMocks {
   @Before
@@ -93,7 +93,7 @@ public class TopDownIntegrationTestWithMocks {
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
             builderMock, 
-            new LineSequenceStateStub());
+            new InitialState());
     
     try {
       TimesagEngine engine = new TimesagEngine();
@@ -127,7 +127,7 @@ public class TopDownIntegrationTestWithMocks {
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
             builder, 
-            new LineSequenceStateStub());
+            new InitialState());
     
     try {
       TimesagEngine engine = new TimesagEngine();
@@ -154,7 +154,7 @@ public class TopDownIntegrationTestWithMocks {
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
             builder, 
-            new LineSequenceStateStub());
+            new InitialState());
     
     try {
       TimesagEngine engine = new TimesagEngine();

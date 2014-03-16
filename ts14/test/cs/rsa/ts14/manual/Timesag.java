@@ -19,11 +19,11 @@ package cs.rsa.ts14.manual;
 import java.io.*;
 import org.apache.commons.io.*;
 
-import cs.rsa.ts14.doubles.*;
+
 import cs.rsa.ts14.framework.*;
 import cs.rsa.ts14.standard.StandardTimesagLineProcessor;
 import cs.rsa.ts14.standard.TimesagEngine;
-mport cs.rsa.ts14.Golf.statemachine.InitialState;
+import cs.rsa.ts14.Golf.statemachine.InitialState;
 import cs.rsa.ts14.bravo.*;
 import cs.rsa.ts14.charlie.*;
 import cs.rsa.ts14.delta.*;
@@ -47,7 +47,6 @@ public class Timesag {
       System.exit(-1);
     }
     
-    String reportTypeString = args[0];
     File file = new File(args[1]);
 
     // Configure the Timesag processor based upon report type string.
@@ -69,7 +68,7 @@ public class Timesag {
         new StandardTimesagLineProcessor( 
             new BravoLineTypeClassifierStrategy(),
             builder, 
-            new sequenceState);
+            sequenceState);
     
     TimesagEngine engine = new TimesagEngine();
     
