@@ -16,11 +16,16 @@
  
 package cs.rsa.ts14dist.manual; 
  
-import cs.rsa.ts14dist.appserver.*; 
+import cs.rsa.ts14.bravo.BravoTS14Facade;
+import cs.rsa.ts14dist.appserver.RabbitMQDaemon;
+import cs.rsa.ts14dist.appserver.ServerRequestHandler;
+import cs.rsa.ts14dist.appserver.StandardServerRequestHandler;
+import cs.rsa.ts14dist.appserver.TS14Facade;
 import cs.rsa.ts14dist.common.Constants;
-import cs.rsa.ts14dist.cookie.*;
+import cs.rsa.ts14dist.cookie.CookieService;
+import cs.rsa.ts14dist.cookie.StandardCookieService;
 import cs.rsa.ts14dist.database.Storage;
-import cs.rsa.ts14dist.doubles.*; 
+import cs.rsa.ts14dist.doubles.FakeObjectStorage;
  
 /** The main class of the TS14-D daemon. All delegates are
  * configured and the daemon thread started.
@@ -38,7 +43,7 @@ public class TS14DDaemon {
     Storage storage = new FakeObjectStorage();  
      
     // The TS14 domain system  
-    TS14Facade facade = new TS14FacadeDouble(); 
+    TS14Facade facade = new BravoTS14Facade(); 
     
     // The fortune cookie service
     CookieService cookieService = 

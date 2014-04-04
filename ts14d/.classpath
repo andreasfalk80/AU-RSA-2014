@@ -28,5 +28,6 @@
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6.jar"/>
 	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="lib-bootstrap/mockito-all-1.9.5.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>
