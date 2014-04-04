@@ -98,6 +98,8 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
          we copy it manually to the lib folder -->
     <copy file="lib-bootstrap/org.restlet.jar"
           todir="${lib.dir}"/>
+  	 <copy file="lib-bootstrap/mockito-all-1.9.5.jar"
+  	          todir="${lib.dir}"/>
     <ivy:retrieve/>
   </target>    
   
