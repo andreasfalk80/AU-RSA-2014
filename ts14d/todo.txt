@@ -1,0 +1,13 @@
+[OK] Intro the cookie service interface and stub
+
+[OK] validate full e2e of cookie with real services
+  [OK] deploy the cookie rest service 
+         http://146.185.162.241:8182/rsa/cookie
+
+[ ] Make all MQ ip's a list of hosts instead of just a single one.
+
+[ ] review all code and comment, refactor naming and clean up
+
+[ ] intro the real services from Beta
+
+[ ] Documentation and tutorial

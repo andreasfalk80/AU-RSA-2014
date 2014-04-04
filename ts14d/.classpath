@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib-bootstrap/jacocoant.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.11-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.11-sources.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.11.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.4.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1-sources.jar"/>
+	<classpathentry kind="lib" path="lib/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/amqp-client-3.2.4-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/amqp-client-3.2.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/amqp-client-3.2.4.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.6.jar" sourcepath="lib/slf4j-api-1.7.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6-sources.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-log4j12-1.7.6.jar"/>
+	<classpathentry kind="lib" path="lib/org.restlet.jar"/>
+	<classpathentry kind="lib" path="lib-bootstrap/mockito-all-1.9.5.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>
