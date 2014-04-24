@@ -1,0 +1,24 @@
+<ivy-module version="2.0">
+  <info organisation="cs.rsa" module="ts14-d">
+    <license name="Apache" 
+	     url="http://www.apache.org/licenses/LICENSE-2.0.txt" />
+    <ivyauthor name="Henrik Baerbak Christensen" />
+    <description>
+      TS14-D is the mandatory project in the Reliable Software and
+      Architecture fagpakke's second course.
+    </description>
+  </info>
+  
+  <dependencies>
+    <dependency org="junit" name="junit" rev="4.11"/>
+    <dependency org="commons-io" name="commons-io" rev="2.4"/>
+    <dependency org="com.googlecode.json-simple" name="json-simple" 
+		rev="1.1.1"/>
+    
+    <dependency org="org.slf4j" name="slf4j-api" rev="1.7.6"/>
+    <dependency org="org.slf4j" name="slf4j-log4j12" rev="1.7.6"/>
+
+    <dependency org="com.rabbitmq" name="amqp-client" rev="3.2.4"/>
+    <dependency org="org.mongodb" name="mongo-java-driver" rev="2.11.4"/>
+  </dependencies>
+</ivy-module>

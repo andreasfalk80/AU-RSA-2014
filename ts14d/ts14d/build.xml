@@ -1,0 +1,257 @@
+<!-- Reliable Software and Architecture.
+
+     Mandatory project: TS14-D.
+
+ * Copyright 2014 Henrik Baerbak Christensen, Aarhus University
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+-->
+<project name="ts14d" default="help" basedir="."
+	 xmlns:ivy="antlib:org.apache.ivy.ant"
+	 xmlns:jacoco="antlib:org.jacoco.ant">
+
+  <!-- Several targets are copied from the Ivy tutorials -->
+  <property name="lib.dir" value="lib" />
+  <property name="build.dir" value="build" />
+  <property name="src.dir" value="src" />  
+  <property name="test.dir" value="test" />
+  <property name="javadoc.dir" value="javadoc" />
+  <property name="resource.dir" value="resource" />
+
+  <!-- Unfortunately the restlet framework is not in maven central
+       so I have to hardcode the library -->
+
+  <property name="test.output.directory" value="TEST-RESULT"/>
+
+  <!-- paths used for compilation and run  -->
+  <path id="lib.path.id">
+    <fileset dir="${lib.dir}" />
+  </path>
+
+  <path id="run.path.id">
+    <path refid="lib.path.id" />
+    <path location="${build.dir}" />
+  </path>
+
+  <!-- JaCoCo Coverage analysis -->
+  <taskdef uri="antlib:org.jacoco.ant" 
+	   resource="org/jacoco/ant/antlib.xml">
+    <classpath path="lib-bootstrap/jacocoant.jar"/>
+  </taskdef>
+  <property name="jacoco.report.dir" value="${test.output.directory}/report" />
+  <property name="jacoco.exec" value="${test.output.directory}/jacoco.exec" />
+
+
+  <target name="help">
+    <echo>
+TS14-D project / Reliable Software and Architecture - Mandatory project
+  Targets 
+    clean:     Removes all bytecode
+    resolve:   Download modules identified in the ivy.xml
+
+    test:      Run automated JUnit test cases
+    coverage:  Run tests and generate JaCoCo coverage report
+
+    javadoc:   Generate javadoc in the 'javadoc' folder
+    
+    daemon:    Run daemon, 
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 for Level 1 testing (fake storage)
+
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 use -Ddbip=(the mongo ip) to set IP of the MongoDB
+                 for Level 2 testing (preproduction)
+                 
+    cmd:       Run TS14-D commandline tool, 
+                 use -Dmqip=(the mq ip) to set IP of MQ for Level 1 testing
+                 or -Dmqip=none to run local Level 0 testing
+
+    load:      Run TS14-D client load generator,
+                 use -Dmqip=(the mq ip) to set IP of MQ
+                 use -Duser=(username) to set user to generate load for
+                   the latter defaults to 'user01'
+    	
+  Author: Henrik Baerbak Christensen
+    </echo>
+  </target>
+  
+  <target name="clean">
+    <delete dir="${javadoc.dir}"/>
+    <delete dir="${lib.dir}"/>
+    <delete dir="${build.dir}"/>
+    <delete dir="${test.output.directory}"/>
+  </target>
+  
+  <target name="prepare">
+    <mkdir dir="${javadoc.dir}"/>
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${test.output.directory}"/>
+  </target>
+
+
+  <!-- ================================= 
+       target: resolve              
+       ================================= -->
+  <target name="resolve" 
+	  description="--> retreive dependencies with ivy">
+    <!-- the restlet framework is not in maven central, so
+         we copy it manually to the lib folder -->
+    <copy file="lib-bootstrap/org.restlet.jar"
+          todir="${lib.dir}"/>
+    <ivy:retrieve/>
+  </target>    
+  
+  <!-- ================================= 
+       target: report              
+       ================================= -->
+  <target name="report" depends="resolve" 
+	  description="--> generates a report of dependencies">
+    <ivy:report todir="${build.dir}"/>
+  </target>
+
+  <!-- compilation tasks -->
+  <target name="build-src" depends="prepare,resolve"
+	  description="--> compile production code.">
+    <javac srcdir="${src.dir}"
+	   destdir="${build.dir}"
+	   debug="on" 
+	   classpathref="lib.path.id" 
+	   includeAntRuntime="false">
+    </javac>
+  </target>
+
+  <target name="build-test" depends="build-src"
+	  description="--> compile test code">
+    <javac srcdir="${test.dir}"
+	   destdir="${build.dir}"
+	   debug="on" 
+	   classpathref="lib.path.id" 
+	   includeAntRuntime="false">
+    </javac>
+  </target>
+
+  <target name="copy-resource" depends="prepare">
+    <copy file="${resource.dir}/log4j.properties" todir="${build.dir}"/>
+  </target>
+  
+  <target name="build-all" 
+	  depends="build-src,build-test,copy-resource"/>
+
+  <!-- Run JUnit testing -->
+  <target name="test"  depends="build-all">
+    <junit printsummary="yes" fork="yes" 
+	   forkmode="once"
+	   haltonfailure="yes">
+      <formatter type="plain"/>
+      <batchtest fork="yes" todir="${test.output.directory}">
+	<fileset dir="test">
+	  <include name="**/*Test*.java"/>
+	</fileset>
+      </batchtest>
+      <classpath refid="run.path.id"/>
+    </junit>
+  </target>
+
+  <!-- Java Doc -->
+  <target name="javadoc" depends="build-src"
+	  description="--> generate javadoc in folder '${javadoc.dir}'">
+    <javadoc
+       source = "1.7"
+       packagenames=
+       "cs.rsa.*"
+       sourcepath="${src.dir}"
+       destdir="${javadoc.dir}"
+       package="true"
+       doctitle="&lt;b&gt;Reliable Software and Architecture: TS14-D&lt;/b&gt;"
+       bottom="Henrik Baerbak Christensen, University of Aarhus, Denmark"
+       windowtitle="TS14-D"
+       >
+      <sourcepath>
+	<path location="${src.dir}"/>
+      </sourcepath>
+      <classpath>
+	<path refid="run.path.id"/>
+      </classpath>
+    </javadoc>
+  </target>
+
+
+  <!-- Run JUnit with JaCoCo code coverage -->
+  <target name="run.junit" depends="build-all">
+    <jacoco:coverage destfile="${jacoco.exec}" >
+      <junit printsummary="yes" fork="yes" 
+	     forkmode="once"
+	     haltonfailure="yes">
+	<formatter type="plain"/>
+	<batchtest fork="yes" todir="${test.output.directory}">
+	  <fileset dir="test">
+	    <include name="**/*Test*.java"/>
+	  </fileset>
+	</batchtest>
+	<classpath refid="run.path.id"/>
+      </junit>
+    </jacoco:coverage>
+  </target>
+
+  <target name="coverage" depends="run.junit"
+	  description="--> Generate code coverage report in the report dir">
+    <jacoco:report>
+      <executiondata>
+        <file file="${jacoco.exec}"/>
+      </executiondata>
+      <structure name="TS14 Test" >
+        <classfiles>
+          <fileset dir="${build.dir}">
+	    <include name="**/*.class"/>
+	  </fileset>
+        </classfiles>
+        <sourcefiles encoding="UTF-8" tabwidth="2">
+	  <fileset dir="${src.dir}"/>
+	  <fileset dir="${test.dir}"/>
+        </sourcefiles>
+      </structure>
+      <html destdir="${jacoco.report.dir}"/>
+    </jacoco:report>
+    <echo message="To see report, browse to index.html at ${jacoco.report.dir}."/>
+  </target>
+
+
+  <!-- execution -->
+  <property name="mqip" value="none"/>
+  <property name="dbip" value="none"/>
+  <property name="user" value="user01"/>
+
+  <target name="daemon" depends="build-all">
+    <java classpathref="run.path.id" 
+	  classname="cs.rsa.ts14dist.manual.TS14DDaemon">
+      <arg value="${mqip}"/>
+      <arg value="${dbip}"/>
+    </java>
+  </target>
+
+  <target name="cmd" depends="build-all">
+    <java classpathref="run.path.id" 
+	  classname="cs.rsa.ts14dist.manual.TS14DCmd">
+      <arg value="${mqip}"/>
+    </java>
+  </target>
+
+  <target name="load" depends="build-all">
+    <java classpathref="run.path.id" 
+	  classname="cs.rsa.ts14dist.manual.TS14DLoad">
+      <arg value="${mqip}"/>
+      <arg value="${user}"/>
+    </java>
+  </target>
+
+</project>
