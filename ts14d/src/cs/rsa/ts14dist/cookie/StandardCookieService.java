@@ -22,6 +22,12 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
+import cs.rsa.ts14.circuitbreakerState.CircuitBreaker;
+import cs.rsa.ts14.circuitbreakerState.ClosedCircuitBreaker;
+import cs.rsa.ts14.circuitbreakerState.FaultyClientResource;
+import cs.rsa.ts14.circuitbreakerState.FaultyConnection;
+import cs.rsa.ts14.circuitbreakerState.HalfOpenCircuitBreaker;
+
 /** Standard implementation of the CookieService that
  * makes a REST call to http://(hostname):(port)/rsa/cookie
  * and convert the returned representation into the
@@ -40,11 +46,14 @@ import org.restlet.resource.ResourceException;
 public class StandardCookieService implements CookieService {
 
   private ClientResource resource;
+  private FaultyConnection<FaultyClientResource, Representation> faultResource;
+  private CircuitBreaker<Representation> CB = new ClosedCircuitBreaker<FaultyClientResource, Representation>(faultResource);
 
   public StandardCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
-    resource = new ClientResource(resourceHost); 
+    resource = new ClientResource(resourceHost);
+    //faultResource = new FaultyClientResource(resource);
   }
 
   @Override
