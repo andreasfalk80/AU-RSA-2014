@@ -1,8 +1,9 @@
 package cs.rsa.ts14.circuitbreakerState;
 
-public interface CircuitBreaker<RES> {
+//TODO måske er det ikke nødvendigt med CONN som parameter
+public interface CircuitBreaker<CONN,RES> {
 
-	public CircuitBreaker<RES> call();
+	public CircuitBreaker<CONN, RES> call();
 	
 	public RES getResult();
 

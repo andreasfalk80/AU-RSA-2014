@@ -227,7 +227,7 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
 
 
   <!-- execution -->
-  <property name="mqip" value="none"/>
+  <property name="mqip" value="192.168.21.128"/>
   <property name="dbip" value="none"/>
   <property name="user" value="user01"/>
 

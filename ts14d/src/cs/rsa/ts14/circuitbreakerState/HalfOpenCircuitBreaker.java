@@ -1,6 +1,6 @@
 package cs.rsa.ts14.circuitbreakerState;
 
-public class HalfOpenCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
+public class HalfOpenCircuitBreaker<CONN,RES> implements CircuitBreaker<CONN,RES> {
 
 	FaultyConnection<CONN, RES> managedConn;
 	RES result = null;
@@ -15,8 +15,8 @@ public class HalfOpenCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
 
 	
 	@Override
-	public CircuitBreaker<RES> call(){
-		CircuitBreaker<RES> state = this;
+	public CircuitBreaker<CONN,RES> call(){
+		CircuitBreaker<CONN,RES> state = this;
 		
 		try{
 			result = managedConn.execute();

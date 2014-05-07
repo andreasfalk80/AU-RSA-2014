@@ -1,6 +1,6 @@
 package cs.rsa.ts14.circuitbreakerState;
 
-public class OpenCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
+public class OpenCircuitBreaker<CONN,RES> implements CircuitBreaker<CONN,RES> {
 	int timeOut = 10000; //milliseconds
 	long TimeofOpen;
 	RES result = null;
@@ -18,8 +18,8 @@ public class OpenCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
 	}
 	
 	@Override
-	public CircuitBreaker<RES> call(){
-		CircuitBreaker<RES> state = this;
+	public CircuitBreaker<CONN,RES> call(){
+		CircuitBreaker<CONN,RES> state = this;
 		
 		if(System.currentTimeMillis()-TimeofOpen > timeOut){ //perform call
 			state = new HalfOpenCircuitBreaker<CONN,RES>(managedConn);

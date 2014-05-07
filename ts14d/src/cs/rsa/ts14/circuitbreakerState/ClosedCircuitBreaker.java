@@ -1,7 +1,7 @@
 package cs.rsa.ts14.circuitbreakerState;
 
 
-public class ClosedCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
+public class ClosedCircuitBreaker<CONN,RES> implements CircuitBreaker<CONN,RES> {
 
 	int threshold = 2;
 	int failureCount = 0;
@@ -14,6 +14,9 @@ public class ClosedCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
 	}
 	
 	public ClosedCircuitBreaker(FaultyConnection<CONN, RES> conn){
+		if(conn == null){
+			throw new IllegalArgumentException("Connection can't be null");
+		}
 		managedConn = conn;
 	}
 	
@@ -25,8 +28,8 @@ public class ClosedCircuitBreaker<CONN,RES> implements CircuitBreaker<RES> {
 	
 	
 	@Override
-	public CircuitBreaker<RES> call(){
-		CircuitBreaker<RES> state = this;
+	public CircuitBreaker<CONN,RES> call(){
+		CircuitBreaker<CONN,RES> state = this;
 		
 		try{
 			result = managedConn.execute();
