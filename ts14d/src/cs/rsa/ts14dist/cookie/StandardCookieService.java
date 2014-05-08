@@ -42,12 +42,13 @@ import org.restlet.resource.ResourceException;
 
 public class StandardCookieService implements CookieService {
 
-  private ClientResource resource;  
+  private ClientResource resource;
 
   public StandardCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
     resource = new ClientResource(resourceHost);
+    
   }
 
   @Override
