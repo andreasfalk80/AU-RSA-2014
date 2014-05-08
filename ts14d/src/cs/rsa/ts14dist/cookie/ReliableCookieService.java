@@ -23,6 +23,8 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 
+import cs.rsa.ts14dist.faultyconnection.FaultyConnection;
+
 
 
 /** Standard implementation of the CookieService that
@@ -40,14 +42,15 @@ import org.restlet.resource.ResourceException;
  * @author Henrik Baerbak Christensen, Aarhus University
  */
 
-public class StandardCookieService implements CookieService {
+public class ReliableCookieService implements CookieService {
 
-  private ClientResource resource;
+  private FaultyConnection conn;
 
-  public StandardCookieService(String hostname, String port) {
+  public ReliableCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
-    resource = new ClientResource(resourceHost);
+    ClientResource resource = new ClientResource(resourceHost);
+    conn = new FaultyConnection(resource);
   }
 
   @Override
@@ -56,7 +59,7 @@ public class StandardCookieService implements CookieService {
     // Write the response entity on the console
     try {
       
-      Representation repr = resource.get();
+      Representation repr = conn.get();
    	
       StringWriter writer = new StringWriter();
       repr.write(writer);

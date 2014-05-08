@@ -1,5 +1,6 @@
 package cs.rsa.ts14dist.faultyconnection;
 
+import java.net.ConnectException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,6 @@ public class FaultyConnection {
 	private ClientResource resource;
 	
 	public FaultyConnection(ClientResource originalClientResource){
-		log.info("Dette er en test");
 		resource = originalClientResource;
 	}
 	
@@ -51,7 +51,7 @@ public class FaultyConnection {
 	}
 
 	//delegate funktion der kalder Clientresource via circuitbreaker pattern.
-	public Representation get(){
+	public Representation get() throws ResourceException{
 			return breaker.call(this);
 	}
 	

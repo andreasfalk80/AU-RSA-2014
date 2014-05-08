@@ -21,22 +21,21 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 		// do all the stuff to call the connetion.
 		try {
 			result = conn.executeGet();
-			// F�lgende udf�res kun hvis der ikke er exception
-			log.info("CircuitBreaker - successfull get");
+			// Følgende udføres kun hvis der ikke er exception
+			log.info("successfull get");
 			faultCount = 0;
 		} catch (ResourceException e) {
 			faultCount++;
-			log.info("CircuitBreaker - unsuccecssfull get, faultCount: "
+			log.info("unsuccecssfull get, faultCount: "
 					+ faultCount);
 			if (faultCount >= threshold) {
+				log.info("number of faults passed threshold. Set to Open state");
 				// update state
 				conn.setBreaker(new OpenCircuitBreaker());
-				// TODO log incident
-				
-				// rethrow exception
-				throw e;
-
 			}
+			
+			// re throw exception
+			throw e;
 		}
 		return result;
 
