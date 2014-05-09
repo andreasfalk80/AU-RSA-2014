@@ -1,8 +1,7 @@
-package cs.rsa.ts14dist.faultyconnection;
+package cs.rsa.ts14dist.circuitbreakableconnection;
 
 
 import org.restlet.representation.Representation;
-import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,8 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 		log.info("CircuitBreaker entering Closed state");
 	}
 
-	public Representation call(FaultyConnection conn) {
+	
+	public Representation call(CircuitbreakableConnection conn) {
 		Representation result = null;
 		// do all the stuff to call the connetion.
 		try {
@@ -24,7 +24,7 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 			// Følgende udføres kun hvis der ikke er exception
 			log.info("successfull get");
 			faultCount = 0;
-		} catch (ResourceException e) {
+		} catch (Exception e) {
 			faultCount++;
 			log.info("unsuccecssfull get, faultCount: "
 					+ faultCount);

@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.faultyconnection;
+package cs.rsa.ts14dist.circuitbreakableconnection;
 
 import org.restlet.representation.Representation;
 
@@ -10,5 +10,5 @@ public interface CircuitBreaker {
 //	public void setWaitTime(int milliseconds);
 //	public int getWaitTime();
 	
-	public Representation call(FaultyConnection conn); 
+	public Representation call(CircuitbreakableConnection conn); 
 }

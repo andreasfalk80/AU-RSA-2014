@@ -7,8 +7,11 @@ import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import cs.rsa.ts14dist.circuitbreakableconnection.CircuitbreakableConnection;
+import cs.rsa.ts14dist.circuitbreakableconnection.PartialClientResource;
+import cs.rsa.ts14dist.circuitbreakableconnection.WrappedClientResource;
 import cs.rsa.ts14dist.common.Constants;
-import cs.rsa.ts14dist.faultyconnection.FaultyConnection;
+import cs.rsa.ts14dist.doubles.FakeClientResource;
 
 public class Tester {
 	static Logger log = LoggerFactory.getLogger(Tester.class);
@@ -18,9 +21,10 @@ public class Tester {
 	 */
 	public static void main(String[] args) {
 		BasicConfigurator.configure();
-		ClientResource res = new ClientResource("http://localhost:1500");
-//		ClientResource res = new ClientResource("http://"+Constants.DIGITALOCEAN_INSTANCE_IP+":"+Constants.COOKIE_REST_PORT+"/rsa/cookie");
-		FaultyConnection temp = new FaultyConnection(res);
+//		ClientResource res = new ClientResource("http://localhost:1500");
+	//	WrappedClientResource res = new WrappedClientResource("http://"+Constants.DIGITALOCEAN_INSTANCE_IP+":"+Constants.COOKIE_REST_PORT+"/rsa/cookie");
+		PartialClientResource res = new FakeClientResource();
+		CircuitbreakableConnection temp = new CircuitbreakableConnection(res);
 
 		Representation result = null;
 
@@ -31,14 +35,11 @@ public class Tester {
 			} catch (ResourceException e) {
 				log.info("Exception!");
 			}
-			if (result == null) {
-				log.warn("No response was received");
-			}
 		}
 
 		try{
-			log.info("Sleeping for 10 seconds");
-			Thread.sleep(10000);
+			log.info("Sleeping for 12 seconds");
+			Thread.sleep(12000);
 		}
 		catch(InterruptedException e){
 			//do nothing, just continue

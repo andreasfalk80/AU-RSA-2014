@@ -1,6 +1,7 @@
-package cs.rsa.ts14dist.faultyconnection;
+package cs.rsa.ts14dist.circuitbreakableconnection;
 
 import org.restlet.representation.Representation;
+import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +15,12 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 		creationTime = System.currentTimeMillis();
 	}
 	
-	public Representation call(FaultyConnection conn) {
+	public Representation call(CircuitbreakableConnection conn) {
 		Representation result = null;
 		//Hvis vi har ventet lang tid nok
-		if(System.currentTimeMillis()-creationTime > waitTime){
+		long now = System.currentTimeMillis();
+		long diff = now-creationTime;
+		if(diff > waitTime){
 			log.info("Attempted call, after timeout periode completed. Attempting reset");
 			
 			//Vi forsï¿½ger om forbindelsen virker igen
@@ -27,6 +30,10 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 		}
 		else{
 			log.info("Attempted call, before timeout periode completed. Call fail");
+			log.debug("now: " + now + " creationTime: "+creationTime + " waitTime: " + waitTime +" difference: " + diff);
+			//Her faker vi bare en exception fra Restlet frameworket, da det er sådan en exception der ville komme normalt.
+			//TODO er det en god ide, eller skal den kaldende vide at der circuitbreakeren er åbnet??
+			throw new ResourceException(1000,"Connection error","Unable to establish a connection","unknown");
 		}
 		return result;
 	}

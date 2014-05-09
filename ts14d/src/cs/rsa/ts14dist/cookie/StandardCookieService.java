@@ -64,7 +64,6 @@ public class StandardCookieService implements CookieService {
       
     } catch (ResourceException e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
     } 
 
     return result;

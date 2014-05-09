@@ -19,11 +19,15 @@ package cs.rsa.ts14dist.cookie;
 import java.io.IOException;
 import java.io.StringWriter;
 
+import org.restlet.Context;
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.faultyconnection.FaultyConnection;
+import cs.rsa.ts14dist.circuitbreakableconnection.CircuitbreakableConnection;
+import cs.rsa.ts14dist.circuitbreakableconnection.WrappedClientResource;
 
 
 
@@ -43,14 +47,19 @@ import cs.rsa.ts14dist.faultyconnection.FaultyConnection;
  */
 
 public class ReliableCookieService implements CookieService {
-
-  private FaultyConnection conn;
+	Logger log = LoggerFactory.getLogger(ReliableCookieService.class);
+  private CircuitbreakableConnection conn;
 
   public ReliableCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
-    ClientResource resource = new ClientResource(resourceHost);
-    conn = new FaultyConnection(resource);
+    
+    Context cnt = new Context();
+    cnt.getParameters().add("socketTimeout", "1000");//TODO der mangler håndtering af automatisk retry.
+    
+    //Since i have no official interface to code up against!!
+    WrappedClientResource resource = new WrappedClientResource(cnt,resourceHost);
+    conn = new CircuitbreakableConnection(resource);
   }
 
   @Override
@@ -65,9 +74,8 @@ public class ReliableCookieService implements CookieService {
       repr.write(writer);
       result = writer.toString();
       
-    } catch (ResourceException e) {
+    } catch (Exception e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
     } 
 
     return result;

@@ -70,7 +70,6 @@ public class TS14DLoad {
         Thread.sleep(1000L);
       } catch (InterruptedException e) {
         // TODO Auto-generated catch block
-        e.printStackTrace();
       }
     }
     
@@ -81,7 +80,6 @@ public class TS14DLoad {
       System.out.println(""+count+": "+line + " / "+ lineType);
     } catch (IOException e) {
       // TODO Auto-generated catch block
-      e.printStackTrace();
     } 
   }
 

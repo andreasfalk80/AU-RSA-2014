@@ -37,11 +37,7 @@ public class Level1ServerFactory implements ServerAbstractFactory {
     // The TS14 domain system  
     TS14Facade facade = new TS14FacadeDouble(); 
     
-    // The fortune cookie service
-//    CookieService cookieService = 
-  //      new StandardCookieService(Constants.DIGITALOCEAN_INSTANCE_IP, 
-    //        Constants.COOKIE_REST_PORT);
-    //The reliable cookieservice
+    //The reliable fortune cookieservice
     CookieService cookieService = 
             new ReliableCookieService(Constants.DIGITALOCEAN_INSTANCE_IP, 
                 Constants.COOKIE_REST_PORT);
