@@ -31,8 +31,8 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 		else{
 			log.info("Attempted call, before timeout periode completed. Call fail");
 			log.debug("now: " + now + " creationTime: "+creationTime + " waitTime: " + waitTime +" difference: " + diff);
-			//Her faker vi bare en exception fra Restlet frameworket, da det er sådan en exception der ville komme normalt.
-			//TODO er det en god ide, eller skal den kaldende vide at der circuitbreakeren er åbnet??
+			//Her faker vi bare en exception fra Restlet frameworket, da det er sÃ¥dan en exception der ville komme normalt.
+			//TODO er det en god ide, eller skal den kaldende vide at der circuitbreakeren er Ã¥bnet??
 			throw new ResourceException(1000,"Connection error","Unable to establish a connection","unknown");
 		}
 		return result;

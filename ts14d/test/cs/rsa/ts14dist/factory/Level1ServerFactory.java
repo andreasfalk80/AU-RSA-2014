@@ -41,8 +41,7 @@ public class Level1ServerFactory implements ServerAbstractFactory {
     CookieService cookieService = 
             new ReliableCookieService(Constants.DIGITALOCEAN_INSTANCE_IP, 
                 Constants.COOKIE_REST_PORT);
-
-
+    
     return new StandardServerRequestHandler(storage, facade, cookieService);
   }
 

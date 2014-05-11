@@ -21,8 +21,6 @@ import java.io.StringWriter;
 
 import org.restlet.Context;
 import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
-import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,16 +53,17 @@ public class ReliableCookieService implements CookieService {
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
     
     Context cnt = new Context();
-    cnt.getParameters().add("socketTimeout", "1000");//TODO der mangler håndtering af automatisk retry.
+    cnt.getParameters().add("socketTimeout", "4000");//TODO der mangler hï¿½ndtering af automatisk retry.
     
     //Since i have no official interface to code up against!!
     WrappedClientResource resource = new WrappedClientResource(cnt,resourceHost);
+    resource.setRetryAttempts(0);
     conn = new CircuitbreakableConnection(resource);
   }
 
   @Override
   public String getNextCookie() throws IOException {
-    String result = "fault"; 
+    String result = "Today's fortune cookie is unfortunately unavailable."; 
     // Write the response entity on the console
     try {
       
@@ -73,6 +72,7 @@ public class ReliableCookieService implements CookieService {
       StringWriter writer = new StringWriter();
       repr.write(writer);
       result = writer.toString();
+      repr.release();
       
     } catch (Exception e) {
       // TODO Auto-generated catch block

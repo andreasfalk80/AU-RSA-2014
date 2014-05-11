@@ -1,7 +1,6 @@
 package cs.rsa.ts14dist.circuitbreakableconnection;
 
 import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
 import org.slf4j.LoggerFactory;
 
 public class CircuitbreakableConnection {
