@@ -63,7 +63,7 @@ public class StandardCookieService implements CookieService {
       result = writer.toString();
       
     } catch (ResourceException e) {
-      // TODO Auto-generated catch block
+    	//Do nothing 
     } 
 
     return result;

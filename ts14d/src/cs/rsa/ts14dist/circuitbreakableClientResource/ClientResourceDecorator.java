@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.doubles;
+package cs.rsa.ts14dist.circuitbreakableClientResource;
 
 import java.util.List;
 
@@ -22,489 +22,338 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.restlet.util.Series;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * The role as Decorator in the Decorator pattern.   
+ *
+ */
+public abstract class ClientResourceDecorator implements ClientResourceInterface {
 
-import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
+	protected ClientResourceInterface resource;
 
-public class FakeClientResource implements ClientResourceInterface {
-	Logger log = LoggerFactory.getLogger(FakeClientResource.class);
-	private int count = 0; 
-	
-	@Override
-	public Representation get() {
-		count ++;
-		log.info("Get # " + count);
-		if((5 < count && count < 8) ||
-				(12 < count && count < 20)){
-			throw new ResourceException(0);
-		}
-		return null;
-
-	}
-
-	@Override
 	public void accept(Metadata metadata, float quality) {
-		throw new UnsupportedOperationException();
-		
+		resource.accept(metadata, quality);
 	}
 
-	@Override
 	public void accept(Metadata... metadata) {
-		throw new UnsupportedOperationException();
-		
+		resource.accept(metadata);
 	}
 
-	@Override
 	public Reference addQueryParameter(Parameter parameter) {
-		throw new UnsupportedOperationException();
+		return resource.addQueryParameter(parameter);
 	}
 
-	@Override
 	public Reference addQueryParameter(String name, String value) {
-		throw new UnsupportedOperationException();
+		return resource.addQueryParameter(name, value);
 	}
 
-	@Override
 	public Reference addQueryParameters(Iterable<Parameter> parameters) {
-		throw new UnsupportedOperationException();
+		return resource.addQueryParameters(parameters);
 	}
 
-	@Override
 	public Reference addSegment(String value) {
-		throw new UnsupportedOperationException();
+		return resource.addSegment(value);
 	}
 
-	@Override
 	public Request createRequest() {
-		throw new UnsupportedOperationException();
+		return resource.createRequest();
 	}
 
-	@Override
 	public Request createRequest(Request prototype) {
-		throw new UnsupportedOperationException();
+		return resource.createRequest(prototype);
 	}
 
-	@Override
 	public Representation delete() throws ResourceException {
-		throw new UnsupportedOperationException();
+		return resource.delete();
 	}
 
-	@Override
 	public <T> T delete(Class<T> resultClass) throws ResourceException {
-		throw new UnsupportedOperationException();
+		return resource.delete(resultClass);
 	}
 
-	@Override
 	public Representation delete(MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.delete(mediaType);
 	}
 
-	@Override
 	public void doError(Status errorStatus) {
-		throw new UnsupportedOperationException();
-		
+		resource.doError(errorStatus);
 	}
 
-	@Override
+	public Representation get() throws ResourceException {
+		return resource.get();
+	}
+
 	public <T> T get(Class<T> resultClass) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.get(resultClass);
 	}
 
-	@Override
 	public Representation get(MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.get(mediaType);
 	}
 
-	@Override
 	public String getAttribute(String name) {
-		throw new UnsupportedOperationException();
-
+		return resource.getAttribute(name);
 	}
 
-	@Override
 	public <T> T getChild(Reference relativeRef, Class<? extends T> resourceInterface) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getChild(relativeRef, resourceInterface);
 	}
 
-	@Override
 	public ClientResource getChild(Reference relativeRef) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getChild(relativeRef);
 	}
 
-	@Override
 	public <T> T getChild(String relativeUri, Class<? extends T> resourceInterface) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getChild(relativeUri, resourceInterface);
 	}
 
-	@Override
 	public ClientResource getChild(String relativeUri) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getChild(relativeUri);
 	}
 
-	@Override
 	public int getMaxRedirects() {
-		throw new UnsupportedOperationException();
+		return resource.getMaxRedirects();
 	}
 
-	@Override
 	public Uniform getNext() {
-		throw new UnsupportedOperationException();
-
+		return resource.getNext();
 	}
 
-	@Override
 	public Uniform getOnResponse() {
-		throw new UnsupportedOperationException();
-
+		return resource.getOnResponse();
 	}
 
-	@Override
 	public Uniform getOnSent() {
-		throw new UnsupportedOperationException();
-
+		return resource.getOnSent();
 	}
 
-	@Override
 	public ClientResource getParent() throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getParent();
 	}
 
-	@Override
 	public <T> T getParent(Class<? extends T> resourceInterface) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.getParent(resourceInterface);
 	}
 
-	@Override
 	public int getRetryAttempts() {
-		throw new UnsupportedOperationException();
+		return resource.getRetryAttempts();
 	}
 
-	@Override
 	public long getRetryDelay() {
-		throw new UnsupportedOperationException();
+		return resource.getRetryDelay();
 	}
 
-	@Override
 	public Representation handle() {
-		throw new UnsupportedOperationException();
-
+		return resource.handle();
 	}
 
-	@Override
 	public Response handle(Request request) {
-		throw new UnsupportedOperationException();
-
+		return resource.handle(request);
 	}
 
-	@Override
 	public Representation handleInbound(Response response) {
-		throw new UnsupportedOperationException();
-
+		return resource.handleInbound(response);
 	}
 
-	@Override
 	public Response handleOutbound(Request request) {
-		throw new UnsupportedOperationException();
-
+		return resource.handleOutbound(request);
 	}
 
-	@Override
 	public boolean hasNext() {
-		throw new UnsupportedOperationException();
+		return resource.hasNext();
 	}
 
-	@Override
 	public Representation head() throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.head();
 	}
 
-	@Override
 	public Representation head(MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.head(mediaType);
 	}
 
-	@Override
 	public boolean isFollowingRedirects() {
-		throw new UnsupportedOperationException();
+		return resource.isFollowingRedirects();
 	}
 
-	@Override
 	public boolean isRequestEntityBuffering() {
-		throw new UnsupportedOperationException();
+		return resource.isRequestEntityBuffering();
 	}
 
-	@Override
 	public boolean isResponseEntityBuffering() {
-		throw new UnsupportedOperationException();
+		return resource.isResponseEntityBuffering();
 	}
 
-	@Override
 	public boolean isRetryOnError() {
-		throw new UnsupportedOperationException();
+		return resource.isRetryOnError();
 	}
 
-	@Override
 	public Representation options() throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.options();
 	}
 
-	@Override
 	public <T> T options(Class<T> resultClass) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.options(resultClass);
 	}
 
-	@Override
 	public Representation options(MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.options(mediaType);
 	}
 
-	@Override
 	public <T> T post(Object entity, Class<T> resultClass) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.post(entity, resultClass);
 	}
 
-	@Override
 	public Representation post(Object entity, MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.post(entity, mediaType);
 	}
 
-	@Override
 	public Representation post(Object entity) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.post(entity);
 	}
 
-	@Override
 	public Representation post(Representation entity) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.post(entity);
 	}
 
-	@Override
 	public <T> T put(Object entity, Class<T> resultClass) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.put(entity, resultClass);
 	}
 
-	@Override
 	public Representation put(Object entity, MediaType mediaType) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.put(entity, mediaType);
 	}
 
-	@Override
 	public Representation put(Object entity) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.put(entity);
 	}
 
-	@Override
 	public Representation put(Representation entity) throws ResourceException {
-		throw new UnsupportedOperationException();
-
+		return resource.put(entity);
 	}
 
-	@Override
 	public void setAttribute(String name, Object value) {
-		throw new UnsupportedOperationException();
-		
+		resource.setAttribute(name, value);
 	}
 
-	@Override
 	public void setChallengeResponse(ChallengeResponse challengeResponse) {
-		throw new UnsupportedOperationException();
-		
+		resource.setChallengeResponse(challengeResponse);
 	}
 
-	@Override
 	public void setChallengeResponse(ChallengeScheme scheme, String identifier, String secret) {
-		throw new UnsupportedOperationException();
-		
+		resource.setChallengeResponse(scheme, identifier, secret);
 	}
 
-	@Override
 	public void setClientInfo(ClientInfo clientInfo) {
-		throw new UnsupportedOperationException();
-		
+		resource.setClientInfo(clientInfo);
 	}
 
-	@Override
 	public void setConditions(Conditions conditions) {
-		throw new UnsupportedOperationException();
-		
+		resource.setConditions(conditions);
 	}
 
-	@Override
 	public void setCookies(Series<Cookie> cookies) {
-		throw new UnsupportedOperationException();
-		
+		resource.setCookies(cookies);
 	}
 
-	@Override
 	public void setEntityBuffering(boolean entityBuffering) {
-		throw new UnsupportedOperationException();
-		
+		resource.setEntityBuffering(entityBuffering);
 	}
 
-	@Override
 	public void setFollowingRedirects(boolean followingRedirects) {
-		throw new UnsupportedOperationException();
-		
+		resource.setFollowingRedirects(followingRedirects);
 	}
 
-	@Override
 	public void setHostRef(Reference hostRef) {
-		throw new UnsupportedOperationException();
-		
+		resource.setHostRef(hostRef);
 	}
 
-	@Override
 	public void setHostRef(String hostUri) {
-		throw new UnsupportedOperationException();
-		
+		resource.setHostRef(hostUri);
 	}
 
-	@Override
 	public void setLoggable(boolean loggable) {
-		throw new UnsupportedOperationException();
-		
+		resource.setLoggable(loggable);
 	}
 
-	@Override
 	public void setMaxRedirects(int maxRedirects) {
-		throw new UnsupportedOperationException();
-		
+		resource.setMaxRedirects(maxRedirects);
 	}
 
-	@Override
 	public void setMethod(Method method) {
-		throw new UnsupportedOperationException();
-		
+		resource.setMethod(method);
 	}
 
-	@Override
 	public void setNext(Uniform arg0) {
-		throw new UnsupportedOperationException();
-		
+		resource.setNext(arg0);
 	}
 
-	@Override
 	public void setOnResponse(Uniform onResponseCallback) {
-		throw new UnsupportedOperationException();
-		
+		resource.setOnResponse(onResponseCallback);
 	}
 
-	@Override
 	public void setOnSent(Uniform onSentCallback) {
-		throw new UnsupportedOperationException();
-		
+		resource.setOnSent(onSentCallback);
 	}
 
-	@Override
 	public void setOriginalRef(Reference originalRef) {
-		throw new UnsupportedOperationException();
-		
+		resource.setOriginalRef(originalRef);
 	}
 
-	@Override
 	public void setProtocol(Protocol protocol) {
-		throw new UnsupportedOperationException();
-		
+		resource.setProtocol(protocol);
 	}
 
-	@Override
 	public void setProxyChallengeResponse(ChallengeResponse challengeResponse) {
-		throw new UnsupportedOperationException();
-		
+		resource.setProxyChallengeResponse(challengeResponse);
 	}
 
-	@Override
 	public void setProxyChallengeResponse(ChallengeScheme scheme, String identifier, String secret) {
-		throw new UnsupportedOperationException();
-		
+		resource.setProxyChallengeResponse(scheme, identifier, secret);
 	}
 
-	@Override
 	public void setRanges(List<Range> ranges) {
-		throw new UnsupportedOperationException();
-		
+		resource.setRanges(ranges);
 	}
 
-	@Override
 	public void setReference(Reference reference) {
-		throw new UnsupportedOperationException();
-		
+		resource.setReference(reference);
 	}
 
-	@Override
 	public void setReference(String uri) {
-		throw new UnsupportedOperationException();
-		
+		resource.setReference(uri);
 	}
 
-	@Override
 	public void setReferrerRef(Reference referrerRef) {
-		throw new UnsupportedOperationException();
-		
+		resource.setReferrerRef(referrerRef);
 	}
 
-	@Override
 	public void setReferrerRef(String referrerUri) {
-		throw new UnsupportedOperationException();
-		
+		resource.setReferrerRef(referrerUri);
 	}
 
-	@Override
 	public void setRequestEntityBuffering(boolean requestEntityBuffering) {
-		throw new UnsupportedOperationException();
-		
+		resource.setRequestEntityBuffering(requestEntityBuffering);
 	}
 
-	@Override
 	public void setResponseEntityBuffering(boolean responseEntityBuffering) {
-		throw new UnsupportedOperationException();
-		
+		resource.setResponseEntityBuffering(responseEntityBuffering);
 	}
 
-	@Override
 	public void setRetryAttempts(int retryAttempts) {
-		throw new UnsupportedOperationException();
-		
+		resource.setRetryAttempts(retryAttempts);
 	}
 
-	@Override
 	public void setRetryDelay(long retryDelay) {
-		throw new UnsupportedOperationException();
-		
+		resource.setRetryDelay(retryDelay);
 	}
 
-	@Override
 	public void setRetryOnError(boolean retryOnError) {
-		throw new UnsupportedOperationException();
-		
+		resource.setRetryOnError(retryOnError);
 	}
 
-	@Override
 	public <T> T wrap(Class<? extends T> resourceInterface) {
-		throw new UnsupportedOperationException();
-
+		return resource.wrap(resourceInterface);
 	}
-
+	
+	
+	
 }

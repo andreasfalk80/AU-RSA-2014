@@ -24,41 +24,48 @@ import org.restlet.representation.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableconnection.CircuitbreakableConnection;
-import cs.rsa.ts14dist.circuitbreakableconnection.WrappedClientResource;
+import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
+import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
+import cs.rsa.ts14dist.circuitbreakableClientResource.SimpleClientResource;
 
 
 
-/** Standard implementation of the CookieService that
+/** Reliable implementation of the CookieService that
  * makes a REST call to http://(hostname):(port)/rsa/cookie
  * and convert the returned representation into the
  * fortune cookie string.
+ * 
+ * It uses the newly developed CircuitBreakableClientResource to assure stability.
  * 
  * An instance is deployed on a Digital Ocean instance,
  * see the Constants class for IP and port.
  * 
  * @see cs.rsa.ts14dist.common.Constants
  * 
- * Todo: The logger still writes to stderr :(
- * 
- * @author Henrik Baerbak Christensen, Aarhus University
  */
-
 public class ReliableCookieService implements CookieService {
 	Logger log = LoggerFactory.getLogger(ReliableCookieService.class);
-  private CircuitbreakableConnection conn;
+  private CircuitbreakableClientResource conn;
 
+  
   public ReliableCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
+    /*
+     *  By setting SocketTimeout to 4 seconds, we make sure that the total call, including access to MONGO and transmitting by MQ, properly won't take more than 6 seconds.
+     */
+    Context context = new Context();
+    context.getParameters().add("socketTimeout", "4000");
     
-    Context cnt = new Context();
-    cnt.getParameters().add("socketTimeout", "4000");//TODO der mangler h�ndtering af automatisk retry.
-    
-    //Since i have no official interface to code up against!!
-    WrappedClientResource resource = new WrappedClientResource(cnt,resourceHost);
+    /*
+     * Since there is no official interface to code up against for ClientResource, the SimpleClientResource is used instead.
+     * Part of the Decorator pattern solution
+     */
+    ClientResourceInterface resource = new SimpleClientResource(context,resourceHost);
+    //Make sure that the ClientResource won't do automatic retries, since that would mean x*6 seconds for x retries.
     resource.setRetryAttempts(0);
-    conn = new CircuitbreakableConnection(resource);
+    
+    conn = new CircuitbreakableClientResource(resource);
   }
 
   @Override
@@ -75,7 +82,9 @@ public class ReliableCookieService implements CookieService {
       repr.release();
       
     } catch (Exception e) {
-      // TODO Auto-generated catch block
+      /* No exception are sent any further, since they have all been dealt with in the Circuitbreaker.
+       * Instead the default result text is returned.
+       */
     } 
 
     return result;

@@ -133,7 +133,8 @@ public class StandardServerRequestHandler implements ServerRequestHandler {
     try {
       cookie += cookieService.getNextCookie();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+    	
+    	//do nothing 
     }
     return cookie;
   } 

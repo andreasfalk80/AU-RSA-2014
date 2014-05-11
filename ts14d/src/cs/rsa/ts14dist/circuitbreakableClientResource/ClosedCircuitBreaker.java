@@ -1,9 +1,14 @@
-package cs.rsa.ts14dist.circuitbreakableconnection;
-
-
+package cs.rsa.ts14dist.circuitbreakableClientResource;
 import org.restlet.representation.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+/**
+ * Define a ConcreteState for the CircuitBreaker
+ *
+ * Closed is the initial state, in which the calls get delegated to the ClientResource.<br/>
+ * If the number of failures in subsequent calls exceed the limit, a transition to the openState is performed. 
+ */
 
 public class ClosedCircuitBreaker implements CircuitBreaker {
 
@@ -12,24 +17,24 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 	private int faultCount = 0;
 
 	public ClosedCircuitBreaker() {
-		log.info("CircuitBreaker entering Closed state");
+		log.debug("CircuitBreaker entering Closed state");
 	}
 
-	
-	public Representation call(CircuitbreakableConnection conn) {
+	@Override
+	public Representation call(CircuitbreakableClientResource conn) {
 		Representation result = null;
 		// do all the stuff to call the connetion.
 		try {
 			result = conn.executeGet();
 			// Følgende udføres kun hvis der ikke er exception
-			log.info("successfull get");
+			log.debug("successfull get");
 			faultCount = 0;
 		} catch (Exception e) {
 			faultCount++;
-			log.info("unsuccecssfull get, faultCount: "
+			log.debug("unsuccecssfull get, faultCount: "
 					+ faultCount);
 			if (faultCount >= threshold) {
-				log.info("number of faults passed threshold. Set to Open state");
+				log.debug("number of faults passed threshold. Set to Open state");
 				// update state
 				conn.setBreaker(new OpenCircuitBreaker());
 			}

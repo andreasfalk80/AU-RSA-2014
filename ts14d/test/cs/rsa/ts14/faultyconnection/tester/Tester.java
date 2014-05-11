@@ -2,17 +2,14 @@ package cs.rsa.ts14.faultyconnection.tester;
 
 import org.apache.log4j.BasicConfigurator;
 import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableconnection.CircuitbreakableConnection;
-import cs.rsa.ts14dist.circuitbreakableconnection.PartialClientResource;
-import cs.rsa.ts14dist.circuitbreakableconnection.WrappedClientResource;
-import cs.rsa.ts14dist.common.Constants;
+import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
+import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
 import cs.rsa.ts14dist.doubles.FakeClientResource;
-
+//TODO denne klasse skal implementeres som JUnit istedet for. Og der efter slettes
 public class Tester {
 	static Logger log = LoggerFactory.getLogger(Tester.class);
 
@@ -23,8 +20,8 @@ public class Tester {
 		BasicConfigurator.configure();
 //		ClientResource res = new ClientResource("http://localhost:1500");
 	//	WrappedClientResource res = new WrappedClientResource("http://"+Constants.DIGITALOCEAN_INSTANCE_IP+":"+Constants.COOKIE_REST_PORT+"/rsa/cookie");
-		PartialClientResource res = new FakeClientResource();
-		CircuitbreakableConnection temp = new CircuitbreakableConnection(res);
+		ClientResourceInterface res = new FakeClientResource();
+		CircuitbreakableClientResource temp = new CircuitbreakableClientResource(res);
 
 		Representation result = null;
 

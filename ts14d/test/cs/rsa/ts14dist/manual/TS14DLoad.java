@@ -69,17 +69,17 @@ public class TS14DLoad {
       try {
         Thread.sleep(1000L);
       } catch (InterruptedException e) {
-        // TODO Auto-generated catch block
+    	  //Do nothing
       }
     }
-    
+     
   }
   private void sendALine(String line) {
     try {
       LineType lineType = requestHandler.addLine(user, line);
       System.out.println(""+count+": "+line + " / "+ lineType);
     } catch (IOException e) {
-      // TODO Auto-generated catch block
+      // Do nothing
     } 
   }
 
