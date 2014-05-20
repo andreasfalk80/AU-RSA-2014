@@ -37,10 +37,14 @@ import java.util.UUID;
 public class RabbitMQRPCConnector implements Connector { 
  
   private Connection connection; 
-  private Channel channel; 
-  private String replyQueueName; 
-  private QueueingConsumer consumer; 
-  private String requestQueueName = "rpc_queue"; 
+  private Channel channelHighPriority;
+  private Channel channelLowPriority;
+  private String replyHighPriorityQueueName;
+  private String replyLowPriorityQueueName; 
+  private QueueingConsumer consumerHighPriority;
+  private QueueingConsumer consumerLowPriority;
+  private String requestHighPriorityQueueName = "rpc_high_queue";
+  private String requestLowPriorityQueueName = "rpc_low_queue";
    
   Logger logger = LoggerFactory.getLogger(RabbitMQRPCConnector.class); 
  
@@ -54,35 +58,81 @@ public class RabbitMQRPCConnector implements Connector {
     ConnectionFactory factory = new ConnectionFactory(); 
     factory.setHost(hostname); 
     connection = factory.newConnection(); 
-    channel = connection.createChannel(); 
+    channelHighPriority = connection.createChannel();
+    channelLowPriority = connection.createChannel(); 
  
-    replyQueueName = channel.queueDeclare().getQueue();  
-    consumer = new QueueingConsumer(channel); 
-    channel.basicConsume(replyQueueName, true, consumer); 
+    replyHighPriorityQueueName = channelHighPriority.queueDeclare().getQueue();  
+    consumerHighPriority = new QueueingConsumer(channelHighPriority); 
+    channelHighPriority.basicConsume(replyHighPriorityQueueName, true, consumerHighPriority); 
+    
+    replyLowPriorityQueueName = channelLowPriority.queueDeclare().getQueue();  
+    consumerLowPriority = new QueueingConsumer(channelLowPriority); 
+    channelLowPriority.basicConsume(replyLowPriorityQueueName, true, consumerLowPriority); 
      
     logger.info("Opening connector on MQ at IP= "+hostname); 
   } 
  
   @Override 
-  public JSONObject sendRequestAndBlockUntilReply(JSONObject payload) throws IOException { 
+  public JSONObject sendHighPriorityRequestAndBlockUntilReply(JSONObject payload) throws IOException { 
     String response = null; 
     String corrId = UUID.randomUUID().toString(); 
  
     BasicProperties props = new BasicProperties 
         .Builder() 
     .correlationId(corrId) 
-    .replyTo(replyQueueName) 
+    .replyTo(replyHighPriorityQueueName) 
     .build(); 
  
     String message = payload.toJSONString(); 
  
     logger.trace("Send request: "+ message); 
-    channel.basicPublish("", requestQueueName , props, message.getBytes()); 
+    channelHighPriority.basicPublish("", requestHighPriorityQueueName , props, message.getBytes()); 
  
     while (true) { 
       QueueingConsumer.Delivery delivery = null; 
       try { 
-        delivery = consumer.nextDelivery(); 
+        delivery = consumerHighPriority.nextDelivery(); 
+      } catch (ShutdownSignalException e) { 
+        logger.error("ShutdownException: "+ e.getMessage()); 
+        e.printStackTrace(); 
+      } catch (ConsumerCancelledException e) { 
+        logger.error("ConsumerCancelledException: "+ e.getMessage()); 
+        e.printStackTrace(); 
+      } catch (InterruptedException e) { 
+        logger.error("InterruptedException: "+ e.getMessage()); 
+        e.printStackTrace(); 
+      } 
+      if (delivery.getProperties().getCorrelationId().equals(corrId)) { 
+        response = new String(delivery.getBody(),"UTF-8"); 
+        logger.trace("Retrieved reply: " + response); 
+        break; 
+      } 
+    } 
+ 
+    JSONObject reply = (JSONObject) JSONValue.parse(response); 
+    return reply; 
+  } 
+  
+  @Override 
+  public JSONObject sendLowPriorityRequestAndBlockUntilReply(JSONObject payload) throws IOException { 
+    String response = null; 
+    String corrId = UUID.randomUUID().toString(); 
+ 
+    BasicProperties props = new BasicProperties 
+        .Builder() 
+    .correlationId(corrId) 
+    .replyTo(replyLowPriorityQueueName) 
+    .build(); 
+ 
+    String message = payload.toJSONString(); 
+ 
+    logger.trace("Send request: "+ message); 
+    channelLowPriority.basicPublish("", requestLowPriorityQueueName , props, message.getBytes()); 
+ 
+    while (true) { 
+      QueueingConsumer.Delivery delivery = null; 
+      try { 
+        delivery = consumerLowPriority.nextDelivery(); 
       } catch (ShutdownSignalException e) { 
         logger.error("ShutdownException: "+ e.getMessage()); 
         e.printStackTrace(); 

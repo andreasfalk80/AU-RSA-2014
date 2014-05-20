@@ -29,6 +29,8 @@ import cs.rsa.ts14dist.common.*;
  */
 public class StandardClientRequestHandler implements ClientRequestHandler { 
  
+  public enum Priority { LOW, HIGH };
+
   private Connector connector; 
  
   public StandardClientRequestHandler(Connector connector) { 
@@ -42,7 +44,7 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
         CommandLanguage.createRequestObject(user, Constants.ADDLINE_REQUEST, ts14Line); 
      
     // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson); 
+    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.HIGH); 
      
     // no error, so extract the reply from the reply object 
     // and cast it to its proper type - bit tedious as the 
@@ -62,7 +64,7 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
         CommandLanguage.createRequestObject(user, Constants.GETCONTENTS_REQUEST, "notused"); 
  
     // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson); 
+    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
  
     // Extract the return value 
     String report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
@@ -77,7 +79,7 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
         CommandLanguage.createRequestObject(user, Constants.GETREPORT_REQUEST, overviewType); 
  
     // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson); 
+    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
  
     // Extract the return value 
     String report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
@@ -86,10 +88,18 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
    
   // === Helper methods  
  
-  private JSONObject requestAndAwaitReply(JSONObject requestJson) 
+  private JSONObject requestAndAwaitReply(JSONObject requestJson, Priority priority) 
       throws IOException { 
-    JSONObject replyJson; 
-    replyJson = connector.sendRequestAndBlockUntilReply(requestJson); 
+    JSONObject replyJson = null;
+    switch(priority) {
+    case HIGH:
+    	replyJson = connector.sendHighPriorityRequestAndBlockUntilReply(requestJson);
+    	break;
+    case LOW:
+    	replyJson = connector.sendLowPriorityRequestAndBlockUntilReply(requestJson);
+    	break;
+    }
+    	
     // throw an exception in case an error occurred 
     boolean error = (boolean) replyJson.get("error"); 
     if ( error ) { 

@@ -28,8 +28,9 @@ import cs.rsa.ts14dist.factory.StandardServerFactory;
  * Requires two arguments: 
  *   Arg 1: IP/name of rabbitmq node
  *   Arg 2: IP/name of mongodb node
+ *   Arg 3: Priority of consumer (LOW, HIGH) (Default: HIGH)
  *   
- *   if the latter is 'none' then a fake object storage is used
+ *   if the second is 'none' then a fake object storage is used
  * 
  * @author Henrik Baerbak Christensen, Aarhus University
  */
@@ -40,6 +41,9 @@ public class TS14DDaemon {
   public static void main(String[] args) throws InterruptedException { 
     String RabbitMQ_IPAddress = args[0]; 
     String MongoDB_IPAddress = args[1];
+    RabbitMQDaemon.Priority priority = RabbitMQDaemon.Priority.HIGH;
+    if ("LOW".equals(args[2].toUpperCase()))
+    	priority = RabbitMQDaemon.Priority.LOW;
      
     ServerAbstractFactory factory;
     
@@ -55,12 +59,13 @@ public class TS14DDaemon {
  
     System.out.println("=== TS14-D Server side Daemon ==="); 
     System.out.println(" RabbitMQ on IP: "+ RabbitMQ_IPAddress); 
-    System.out.println(" MongoDB  on IP: "+ MongoDB_IPAddress); 
+    System.out.println(" MongoDB  on IP: "+ MongoDB_IPAddress);
+    System.out.println(" Priority of consumer: "+ priority.toString());
     System.out.println("  All logging going to log file...");
     System.out.println(" Use ctrl-c to terminate!"); 
      
     // Create the server side daemon, and start it in a thread 
-    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler); 
+    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler, priority); 
     daemon = new Thread(mqDaemon); 
     daemon.start(); 
      

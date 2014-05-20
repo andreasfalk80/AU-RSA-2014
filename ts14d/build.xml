@@ -64,13 +64,27 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
 
     javadoc:   Generate javadoc in the 'javadoc' folder
     
-    daemon:    Run daemon, 
+    daemonHigh:    
+    		   Run daemon, 
                  use -Dmqip=(the mq ip) to set IP of the RabbitMQ
                  for Level 1 testing (fake storage)
 
                  use -Dmqip=(the mq ip) to set IP of the RabbitMQ
                  use -Ddbip=(the mongo ip) to set IP of the MongoDB
                  for Level 2 testing (preproduction)
+    	
+    			 use -Dprio=HIGH for creating a high priority queue consumer
+    	
+	daemonLow:    
+    		   Run daemon, 
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 for Level 1 testing (fake storage)
+
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 use -Ddbip=(the mongo ip) to set IP of the MongoDB
+                 for Level 2 testing (preproduction)
+    	
+    			 use -Dprio=LOW for creating a low priority queue consumer
                  
     cmd:       Run TS14-D commandline tool, 
                  use -Dmqip=(the mq ip) to set IP of MQ for Level 1 testing
@@ -230,14 +244,26 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
   <property name="mqip" value="none"/>
   <property name="dbip" value="none"/>
   <property name="user" value="user01"/>
+  <property name="prioHigh" value="HIGH"/>
+  <property name="prioLow" value="LOW"/>
 
-  <target name="daemon" depends="build-all">
+  <target name="daemonHigh" depends="build-all">
     <java classpathref="run.path.id" 
 	  classname="cs.rsa.ts14dist.manual.TS14DDaemon">
       <arg value="${mqip}"/>
       <arg value="${dbip}"/>
+      <arg value="${prioHigh}"/>
     </java>
   </target>
+
+	<target name="daemonLow" depends="build-all">
+	    <java classpathref="run.path.id" 
+		  classname="cs.rsa.ts14dist.manual.TS14DDaemon">
+	      <arg value="${mqip}"/>
+	      <arg value="${dbip}"/>
+	      <arg value="${prioLow}"/>
+	    </java>
+	  </target>
 
   <target name="cmd" depends="build-all">
     <java classpathref="run.path.id" 

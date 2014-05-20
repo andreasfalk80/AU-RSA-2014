@@ -71,7 +71,7 @@ public class TeztRabbitConnector {
     serverRequestHandler = new SpyServerRequestHandler(); 
      
     // Create the server side deamon, and start it in a thread 
-    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler); 
+    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler, RabbitMQDaemon.Priority.LOW); 
     daemon = new Thread(mqDaemon); 
     daemon.start(); 
   } 
@@ -89,7 +89,7 @@ public class TeztRabbitConnector {
             timesagLineOne); 
  
     JSONObject replyJson; 
-    replyJson = connector.sendRequestAndBlockUntilReply(requestJson); 
+    replyJson = connector.sendLowPriorityRequestAndBlockUntilReply(requestJson); 
  
     boolean error = (boolean) replyJson.get("error"); 
     assertFalse("The returned error flag is not false", error); 
