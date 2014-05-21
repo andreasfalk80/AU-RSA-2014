@@ -46,4 +46,12 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 
 	}
 
+	@Override
+	public CircuitBreakerStates getBreakerState() {
+		return CircuitBreakerStates.CLOSED;
+	}
+	
+	
+	
+
 }

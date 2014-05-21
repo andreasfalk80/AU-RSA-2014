@@ -15,6 +15,13 @@ import org.restlet.representation.Representation;
 
 public interface CircuitBreaker {
 
+	/**
+	 * Query the state of the Breaker.<br\>
+	 * @return Each implementing instance of a CircuitBreaker needs to return the corresponding state.
+	 * 
+	 */
+	public CircuitBreakerStates getBreakerState();
+	
 	
 	
 	/**

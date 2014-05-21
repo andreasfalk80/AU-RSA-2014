@@ -37,13 +37,18 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 			result = tester.call(conn);
 		}
 		else{
-			log.debug("Attempted call, before timeout periode completed. Call fail");
+			log.debug("Attempted call, before timeout periode completed. ClientResource not called");
 			log.trace("now: " + now + " creationTime: "+creationTime + " waitTime: " + waitTime +" difference: " + diff);
 			//Her faker vi bare en exception fra Restlet frameworket, da det er denne type exception der ville komme normalt.
 			//TODO er det en god ide, eller skal den kaldende vide at der circuitbreakeren er åben??
 			throw new ResourceException(1000,"Connection error","Unable to establish a connection","unknown");
 		}
 		return result;
+	}
+	
+	@Override
+	public CircuitBreakerStates getBreakerState() {
+		return CircuitBreakerStates.OPEN;
 	}
 
 }

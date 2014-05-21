@@ -53,4 +53,12 @@ public class CircuitbreakableClientResource extends ClientResourceDecorator{
 		//call the real ClientResource
 		return resource.get();
 	}	
+	
+	/**
+	 * 
+	 * @return the current CircuitBreaker state
+	 */
+	public CircuitBreakerStates getCircuitBreakerState(){
+		return breaker.getBreakerState();
+	}
 }

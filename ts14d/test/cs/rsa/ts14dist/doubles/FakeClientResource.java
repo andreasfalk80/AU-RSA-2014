@@ -26,21 +26,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
-
+/**
+ * 
+ * @author Andreas
+ *
+ */
 public class FakeClientResource implements ClientResourceInterface {
 	Logger log = LoggerFactory.getLogger(FakeClientResource.class);
-	private int count = 0; 
+	private int count = 0;
+	private boolean fail = false;
+	
+
+	//Method to help control behavior during testing
+	public void setResourceToFail(){
+		fail = true;
+	}
+	
+	//Method to help control behavior during testing
+	public void setResourceToSucceed(){
+		fail = false;
+	}
+
+	//Method to help verify testing, by returning the number of recieved calls
+	public int getCount(){
+		return count;
+	}
+	
 	
 	@Override
 	public Representation get() {
 		count ++;
-		log.info("Get # " + count);
-		if((5 < count && count < 8) ||
-				(12 < count && count < 20)){
+		log.debug("FakeClientResource recived get # " + count);
+		if(fail){
 			throw new ResourceException(0);
 		}
 		return null;
-
 	}
 
 	@Override

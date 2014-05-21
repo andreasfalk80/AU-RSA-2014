@@ -34,4 +34,9 @@ public class HalfOpenCircuitBreaker implements CircuitBreaker {
 		}
 		return result;
 	}
+	
+	@Override
+	public CircuitBreakerStates getBreakerState() {
+		return CircuitBreakerStates.HALFOPEN;
+	}
 }

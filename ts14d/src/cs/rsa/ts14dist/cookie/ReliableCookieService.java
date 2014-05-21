@@ -19,14 +19,15 @@ package cs.rsa.ts14dist.cookie;
 import java.io.IOException;
 import java.io.StringWriter;
 
-import org.restlet.Context;
 import org.restlet.representation.Representation;
+import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
 import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
 import cs.rsa.ts14dist.circuitbreakableClientResource.SimpleClientResource;
+import cs.rsa.ts14dist.circuitbreakableClientResource.TimeoutEnabledClientResource;
 
 
 
@@ -36,6 +37,7 @@ import cs.rsa.ts14dist.circuitbreakableClientResource.SimpleClientResource;
  * fortune cookie string.
  * 
  * It uses the newly developed CircuitBreakableClientResource to assure stability.
+ * It uses an asynchronous request, to implement a timeout feature as well.
  * 
  * An instance is deployed on a Digital Ocean instance,
  * see the Constants class for IP and port.
@@ -45,49 +47,44 @@ import cs.rsa.ts14dist.circuitbreakableClientResource.SimpleClientResource;
  */
 public class ReliableCookieService implements CookieService {
 	Logger log = LoggerFactory.getLogger(ReliableCookieService.class);
-  private CircuitbreakableClientResource conn;
+	
+	private ClientResourceInterface resource;
 
   
   public ReliableCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
-    /*
-     *  By setting SocketTimeout to 4 seconds, we make sure that the total call, including access to MONGO and transmitting by MQ, properly won't take more than 6 seconds.
-     */
-    Context context = new Context();
-    context.getParameters().add("socketTimeout", "4000");
+    
     
     /*
      * Since there is no official interface to code up against for ClientResource, the SimpleClientResource is used instead.
      * Part of the Decorator pattern solution
      */
-    ClientResourceInterface resource = new SimpleClientResource(context,resourceHost);
-    //Make sure that the ClientResource won't do automatic retries, since that would mean x*6 seconds for x retries.
-    resource.setRetryAttempts(0);
+    resource = new SimpleClientResource(resourceHost);
+    /*The ordering of the decorators are very important,
+     * since the circuitbreaker needs to call through the timeoutenabled Clientresource
+     */
+     //Decorate with timeout
+    resource = new TimeoutEnabledClientResource(resource);
+    //Decorate with Circuitbreaker
+    resource = new CircuitbreakableClientResource(resource);
     
-    conn = new CircuitbreakableClientResource(resource);
   }
-
+    
   @Override
-  public String getNextCookie() throws IOException {
-    String result = "Today's fortune cookie is unfortunately unavailable."; 
-    // Write the response entity on the console
-    try {
-      
-      Representation repr = conn.get();
-   	
-      StringWriter writer = new StringWriter();
-      repr.write(writer);
-      result = writer.toString();
-      repr.release();
-      
-    } catch (Exception e) {
-      /* No exception are sent any further, since they have all been dealt with in the Circuitbreaker.
-       * Instead the default result text is returned.
-       */
-    } 
+	public String getNextCookie() throws IOException {
+		String result = "Today's fortune cookie is unfortunately unavailable.";
+		try {
+			Representation repr = resource.get(); 
+			if(repr != null){
+				StringWriter writer = new StringWriter();
+				repr.write(writer);
+				result = writer.toString();
+			}
+		} catch (ResourceException e) {
+			//Do nothing 
+		} 
 
-    return result;
-  }
-
+		return result;
+	}
 }
