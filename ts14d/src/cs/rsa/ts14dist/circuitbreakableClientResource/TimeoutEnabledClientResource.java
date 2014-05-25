@@ -48,7 +48,7 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 		}
   		resource.setOnResponse(callback);
   		
-  	    //Make sure that the ClientResource won't do automatic retries, since that would mean x*6 seconds for x retries.
+  	    //Make sure that the ClientResource won't do automatic retries, since that would mean x*timeoutlimit seconds for x retries.
   	    resource.setRetryAttempts(0);
 	}
 
