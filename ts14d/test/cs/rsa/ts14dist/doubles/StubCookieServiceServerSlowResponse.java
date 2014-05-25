@@ -5,7 +5,7 @@ import org.restlet.data.Protocol;
 import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
-public class StubCookieServiceTimeout extends ServerResource implements Runnable{
+public class StubCookieServiceServerSlowResponse extends ServerResource implements Runnable{
 			static int count = 0;
 			static int called = 0;
 			
@@ -13,7 +13,7 @@ public class StubCookieServiceTimeout extends ServerResource implements Runnable
 		   @Get
 		   public String toString() { 
 			   called++;
-			   System.err.println("Server called " +called);
+			   System.err.println("slowServer called " +called);
 			   
 			   try {
 				   Thread.sleep(10000);
@@ -21,14 +21,14 @@ public class StubCookieServiceTimeout extends ServerResource implements Runnable
 				//Do nothing
 			}
 			   count++;
-		      return "hello, world "+count;  
+		      return "SlowResponse "+count;  
 		   }
 
 		@Override
 		public void run() {
 			try{
-				// Create the HTTP server and listen on port 8182  
-				new Server(Protocol.HTTP, 8182, StubCookieServiceTimeout.class).start();  
+				// Create the HTTP server and listen on port 8183  
+				new Server(Protocol.HTTP, 8183, StubCookieServiceServerSlowResponse.class).start();  
 			}
 			catch(Exception e){
 				//do nothing

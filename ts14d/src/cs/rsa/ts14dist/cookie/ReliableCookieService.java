@@ -62,7 +62,8 @@ public class ReliableCookieService implements CookieService {
      */
     resource = new SimpleClientResource(resourceHost);
     /*The ordering of the decorators are very important,
-     * since the circuitbreaker needs to call through the timeoutenabled Clientresource
+     * since the circuitbreaker needs to call through the timeoutenabled Clientresource, 
+     * to let the timeouts be considered as failed calls. 
      */
      //Decorate with timeout
     resource = new TimeoutEnabledClientResource(resource);

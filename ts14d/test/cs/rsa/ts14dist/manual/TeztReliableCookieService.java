@@ -16,22 +16,20 @@
 
 package cs.rsa.ts14dist.manual;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import cs.rsa.ts14dist.common.Constants;
 import cs.rsa.ts14dist.cookie.CookieService;
 import cs.rsa.ts14dist.cookie.ReliableCookieService;
-import cs.rsa.ts14dist.cookie.StandardCookieService;
-import cs.rsa.ts14dist.doubles.StubCookieServiceFastResponse;
-import cs.rsa.ts14dist.doubles.StubCookieServiceTimeout;
+import cs.rsa.ts14dist.doubles.StubCookieServiceServerFastResponse;
+import cs.rsa.ts14dist.doubles.StubCookieServiceServerSlowResponse;
 
 /** MANUAL test of the Reliable CookieService
  * - you have to visually inspect that
@@ -43,72 +41,81 @@ import cs.rsa.ts14dist.doubles.StubCookieServiceTimeout;
 
 public class TeztReliableCookieService {
 
-	private CookieService dummyServiceFastResponse;
-	private CookieService dummyTimeOutService;
+	static private CookieService dummyServiceFastResponse;
+	static private CookieService dummyServiceSlowresponse;
+
+	//On localhost:8182 
+	static StubCookieServiceServerFastResponse fastLocalServer; 
+	//On localhost:8183
+	static StubCookieServiceServerSlowResponse slowLocalServer;
+
+
+	@BeforeClass
+	public static void init() {
+		BasicConfigurator.configure();
+		
+		//Setup test servers
+		fastLocalServer = new StubCookieServiceServerFastResponse(); 
+		slowLocalServer = new StubCookieServiceServerSlowResponse();
+		Thread fast = new Thread(fastLocalServer);
+		fast.run();
+		Thread slow = new Thread(slowLocalServer);
+		slow.run();
+
+	}
+
 
 	@Before
 	public void setup() {
-		BasicConfigurator.configure();
+		//create ReliableCookieService based on the fast server
+		dummyServiceFastResponse = new ReliableCookieService("localhost", "8182");
+
+		//create ReliableCookieService based on the slow server
+		dummyServiceSlowresponse = new ReliableCookieService("localhost", "8183");
+
 	}
-	
+
 	@Test
 	public void shouldGetCookieFromService() throws IOException {
-		StubCookieServiceFastResponse localServer = new StubCookieServiceFastResponse(); 
-		Thread serverThread = new Thread(localServer);
-		serverThread.run();
-		dummyServiceFastResponse = new ReliableCookieService("localhost", "8182");
-//		dummyServiceFastResponse = new StandardCookieService(Constants.DIGITALOCEAN_INSTANCE_IP, Constants.COOKIE_REST_PORT);
-//		dummyServiceFastResponse = new StandardCookieService("localhost", "8182");
-		
+
 		String cookie = dummyServiceFastResponse.getNextCookie();
 		System.out.println(cookie);
 
+		//test that we got a different response
 		assertTrue(!cookie.equals("Today's fortune cookie is unfortunately unavailable."));
 	}
 
-	@Test @Ignore
+	@Test
 	public void shouldTimeoutAfter4Seconds() throws IOException {
-		//Start local running dummyserver
-		StubCookieServiceTimeout localServer = new StubCookieServiceTimeout(); 
-		//localServer.startServer();
-		dummyTimeOutService = new ReliableCookieService("localhost", "8182"); //Called with a local server running with 10 seconds delay for a response
-		
+
 		long start = System.currentTimeMillis();  
-		dummyTimeOutService.getNextCookie();
+		dummyServiceSlowresponse.getNextCookie();
 		long end = System.currentTimeMillis();
 		assertTrue(end-start>4000 && end-start<4200);	
-		
-	//	localServer.StopServer();
-		}
+	}
 
 
 	//because of the Circuitbreaker the third failing call should be alot faster
-	@Test @Ignore
+	@Test
 	public void shouldNotCallServiceTheThirdTime() throws IOException {
-		//		//Start local running dummyserver
-		//StubCookieServiceTimeout localServer = new StubCookieServiceTimeout(); 
-		//localServer.startServer();
-		dummyTimeOutService = new ReliableCookieService("localhost", "8182"); //Called with a local server running with 10 seconds delay for a response
-
 		String cookie;
 
 		long start = System.currentTimeMillis();  
-		cookie = dummyTimeOutService.getNextCookie();
+		cookie = dummyServiceSlowresponse.getNextCookie();
 		long end = System.currentTimeMillis();
 		System.out.println("cookie 1, after "+(end-start)+": " +cookie);
-		
+
 		start = System.currentTimeMillis();  
-		cookie = dummyTimeOutService.getNextCookie();
+		cookie = dummyServiceSlowresponse.getNextCookie();
 		end = System.currentTimeMillis();
 		System.out.println("cookie 2, after "+(end-start)+": " +cookie);
-		
+
 		start = System.currentTimeMillis();  
-		cookie = dummyTimeOutService.getNextCookie();
+		cookie = dummyServiceSlowresponse.getNextCookie();
 		end = System.currentTimeMillis();
 		System.out.println("cookie 3, after "+(end-start)+": " +cookie);
 		assertTrue("Circuitbreaker properly didn't switch to Open",end-start<10); //more than 10 ms is to long for a shortcircuit call
-		
-		//localServer.StopServer();
+
 	}
 
 
