@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ResourceException;
@@ -15,11 +15,14 @@ import org.slf4j.LoggerFactory;
 
 public class OpenCircuitBreaker implements CircuitBreaker {
 	static Logger log = LoggerFactory.getLogger(OpenCircuitBreaker.class);
+	private CircuitBreakerConfiguration conf;
 	private int waitTime = 10000; //in millisecond
 	private long creationTime; 
 	
-	OpenCircuitBreaker() {
+	OpenCircuitBreaker(CircuitBreakerConfiguration conf) {
 		log.debug("CircuitBreaker entering Open state");
+		this.conf = conf;
+		waitTime = this.conf.getWaitUntilReset();
 		creationTime = System.currentTimeMillis();
 	}
 	
@@ -31,8 +34,8 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 		if(diff > waitTime){
 			log.debug("Attempted call, after timeout periode completed. Attempting reset");
 			
-			//Vi fors�ger om forbindelsen virker igen
-			CircuitBreaker tester = new HalfOpenCircuitBreaker();
+			//Vi forsøger om forbindelsen virker igen
+			CircuitBreaker tester = new HalfOpenCircuitBreaker(conf);
 			conn.setBreaker(tester);
 			result = tester.call(conn);
 		}

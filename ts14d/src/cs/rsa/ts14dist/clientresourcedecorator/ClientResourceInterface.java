@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import java.util.List;
 

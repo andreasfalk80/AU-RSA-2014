@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import org.restlet.representation.Representation;
 import org.slf4j.Logger;
@@ -15,9 +15,11 @@ import org.slf4j.LoggerFactory;
 
 public class HalfOpenCircuitBreaker implements CircuitBreaker {
 	static Logger log = LoggerFactory.getLogger(HalfOpenCircuitBreaker.class);
+	private CircuitBreakerConfiguration conf;
 
-	HalfOpenCircuitBreaker() {
+	HalfOpenCircuitBreaker(CircuitBreakerConfiguration conf) {
 		log.debug("CircuitBreaker entering HalfOpen state");
+		this.conf = conf;
 	}
 
 	public Representation call(CircuitbreakableClientResource conn) {
@@ -26,10 +28,10 @@ public class HalfOpenCircuitBreaker implements CircuitBreaker {
 			result = conn.executeGet();
 			// hvis det gik godt
 			log.debug("successfull get. Resetting to Closed state");
-			conn.setBreaker(new ClosedCircuitBreaker());
+			conn.setBreaker(new ClosedCircuitBreaker(conf));
 		} catch (Exception e) {
 			log.debug("unsuccessfull get. Return to Open state");
-			conn.setBreaker(new OpenCircuitBreaker());
+			conn.setBreaker(new OpenCircuitBreaker(conf));
 			throw e;
 		}
 		return result;

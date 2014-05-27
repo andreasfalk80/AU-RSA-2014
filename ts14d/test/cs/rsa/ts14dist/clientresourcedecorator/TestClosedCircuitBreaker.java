@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreaker;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,9 +9,9 @@ import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitBreakerStates;
-import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
-import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
+import cs.rsa.ts14dist.clientresourcedecorator.CircuitBreakerStates;
+import cs.rsa.ts14dist.clientresourcedecorator.CircuitbreakableClientResource;
+import cs.rsa.ts14dist.clientresourcedecorator.ClientResourceInterface;
 import cs.rsa.ts14dist.doubles.FakeClientResource;
 
 public class TestClosedCircuitBreaker {
@@ -23,7 +23,7 @@ public class TestClosedCircuitBreaker {
 	public void setUp() throws Exception {
 		BasicConfigurator.configure();
 		res = new FakeClientResource();
-		resource = new CircuitbreakableClientResource((ClientResourceInterface)res);
+		resource = new CircuitbreakableClientResource((ClientResourceInterface)res,new CircuitBreakerConfiguration(2,10000));
 	}
 
 	/*

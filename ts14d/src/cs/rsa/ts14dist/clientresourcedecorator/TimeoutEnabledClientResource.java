@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import org.restlet.Request;
 import org.restlet.Response;
@@ -11,40 +11,40 @@ import cs.rsa.ts14dist.cookie.ReliableCookieService;
 
 /**
  * TODO rewrite the javadoc for this class
- * The role as Context in the State pattern regarding CircuitBreaker.<br/>
  * The role as ConcreteDecorator in the Decorator pattern.<br/>
  * This class decorates any class that implements the ClientResourceInterface,
  * and more precisely its purpose is to decorate the SimpleClientResource(and in effect also the ClientResource)
- * with a CircuitBreaker, that enables cutting of the external component if problems are registered.<br/>
+ * with a time out functionality, that enables a call to be aborted after a designated time.<br/>
  * <br/>
- * Note that only the function get(), without parameters is extended with a circuitBreaker. 
+ * Note that only the function get(), without parameters is extended with a time out. 
  * All other calls to the resource will act as the original ClientResource.
  */
 
 public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 	static org.slf4j.Logger log = LoggerFactory.getLogger(TimeoutEnabledClientResource.class);
+	//this is the name of the parameter that will get added to the request, so that we can identify the response
+	private static final String paramName = TimeoutEnabledClientResource.class.getSimpleName()+"RequestID";
+	//timeout value. default 4000 milliseconds
+	private final int timeoutLimit;
 	
 	//this variable contains the result for the last sent request.
 	public static volatile Representation result;
 	//ID of the last request given to a callbackhandler, to make sure we don't process an old response.
 	//This also means that there can only be one valid request at a time.
 	public volatile int currentRequest = 1;
-	// To provied acces to the callback function/object
-	UniformWithID callback;
 	
 	
 	/**
 	 * 
 	 * @param originalClientResource is the ClientResource, that needs a Timeout.
+	 * @param timeout is milliseconds to wait for a response
 	 */
-	public TimeoutEnabledClientResource(ClientResourceInterface originalClientResource){
+	public TimeoutEnabledClientResource(ClientResourceInterface originalClientResource,int timeout){
 		resource = originalClientResource;
-		
+		timeoutLimit = timeout;
 		
 		//We declare a callback function to make this call async. This means we can keep track of timeouts ourselfs.
-  		callback = new UniformWithIDImpl();
-  		callback.setClientResource(this);
-  		resource.setOnResponse(callback);
+  		resource.setOnResponse(new UniformImpl());
   		
   	    //Make sure that the ClientResource won't do automatic retries, since that would mean x*timeoutlimit seconds for x retries.
   	    resource.setRetryAttempts(0);
@@ -55,16 +55,18 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 		try {
 			TimeoutEnabledClientResource.result = null;
 	  		synchronized (TimeoutEnabledClientResource.class) {
-				callback.setID(currentRequest);
+	  			//we set the currentrequestnumber, so we can identify the response belonging to the request
+				resource.setAttribute(paramName, currentRequest);
 		//		log.debug("Get called with currentRequest: " +currentRequest);
 	  		}
 			long start = System.currentTimeMillis();
 			resource.get(); //async call!!
 			long end = System.currentTimeMillis();
-			//We wait for 4 seconds, or until we recieve a response
-			while(end-start < 4000 && TimeoutEnabledClientResource.result == null){
+			//We wait for x milliseconds, or until we receive a response
+			int sleeptime = timeoutLimit/20; //this seems to be a good sleeping period
+			while(end-start < timeoutLimit && TimeoutEnabledClientResource.result == null){
 				try{
-					Thread.sleep(200);
+					Thread.sleep(sleeptime); 
 				}
 				catch(InterruptedException e ){
 					//do nothing
@@ -87,58 +89,29 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 		return TimeoutEnabledClientResource.result;
 	}
 	
+
+	public Integer getCurrentRequest(){
+		return Integer.valueOf(currentRequest);
+	}
+	
+	
 	//************************************************************************************************************
 	
-	/**
-	 * This interface allows an ID to be saved with the Uniform. This is used in context of a callbackfunction, 
-	 * where several simultaneous calls and callbackhandlers get there own ID.   
-	 * @author Andreas
-	 *
-	 */
-		public interface UniformWithID extends Uniform{
-			public int getID();
-			public void setID(int id);
-			public void setClientResource(TimeoutEnabledClientResource client);
-			public int getClientResourceCurrentID();
-		}
+			public class UniformImpl implements Uniform {
 
-		public class UniformWithIDImpl implements UniformWithID {
-			int ID;
-			TimeoutEnabledClientResource client;
-			
-			@Override
-			public void setClientResource(TimeoutEnabledClientResource client) {
-				this.client = client;
-				
-			}
-			@Override
-			public int getClientResourceCurrentID() {
-				synchronized (TimeoutEnabledClientResource.class) {
-					return client.currentRequest;
-				}
-			}
-			
-			
-			@Override
-			public int getID(){
-				return ID;
-			}
-			@Override
-			public void setID(int id){
-				ID = id;
-			}
-			@Override
+				@Override
 			public void handle(Request arg0, Response arg1){
-				log.debug("handling the response for ID: " +ID );
+				Integer requestID = (Integer)arg0.getAttributes().get(paramName);
+				log.debug("handling the response for ID: " +requestID);
 				synchronized (ReliableCookieService.class) {
 					//we only save the response if the ID for the handler corresponds to the current request.
-					if(getClientResourceCurrentID() == ID){
+					if(getCurrentRequest().equals(requestID) ){
 						TimeoutEnabledClientResource.result = arg1.getEntity();
 						log.debug("Correct ID on handler - response is saved");
 					}
 					else{
 						//else the response came to late
-						log.debug("Wrong ID on handler response is discarded. Expected value was " + getClientResourceCurrentID());
+						log.debug("Wrong ID on handler response is discarded. Expected value was " + getCurrentRequest());
 					}
 				}
 			}

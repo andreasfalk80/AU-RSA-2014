@@ -29,6 +29,8 @@ public class StubCookieServiceServerSlowResponse extends ServerResource implemen
 			try{
 				// Create the HTTP server and listen on port 8183  
 				new Server(Protocol.HTTP, 8183, StubCookieServiceServerSlowResponse.class).start();  
+				System.err.println("Server is running");
+				
 			}
 			catch(Exception e){
 				//do nothing
