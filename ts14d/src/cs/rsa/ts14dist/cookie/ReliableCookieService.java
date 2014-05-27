@@ -24,10 +24,11 @@ import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
-import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
-import cs.rsa.ts14dist.circuitbreakableClientResource.SimpleClientResource;
-import cs.rsa.ts14dist.circuitbreakableClientResource.TimeoutEnabledClientResource;
+import cs.rsa.ts14dist.clientresourcedecorator.CircuitBreakerConfiguration;
+import cs.rsa.ts14dist.clientresourcedecorator.CircuitbreakableClientResource;
+import cs.rsa.ts14dist.clientresourcedecorator.ClientResourceInterface;
+import cs.rsa.ts14dist.clientresourcedecorator.SimpleClientResource;
+import cs.rsa.ts14dist.clientresourcedecorator.TimeoutEnabledClientResource;
 
 
 
@@ -50,8 +51,22 @@ public class ReliableCookieService implements CookieService {
 	
 	private ClientResourceInterface resource;
 
-  
-  public ReliableCookieService(String hostname, String port) {
+  /**
+   * Creates a ReliableCookieService, with a default timeout of 4000 milliseconds
+   * @param hostname
+   * @param port
+   */
+	  public ReliableCookieService(String hostname, String port) {
+		  this(hostname,port,4000);
+	  }
+	
+	/**
+	 * Creates a ReliableCookieService, with the designated timeout in milliseconds
+	 * @param hostname
+	 * @param port
+	 * @param timeout
+	 */
+	  public ReliableCookieService(String hostname, String port, int timeout) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
     
@@ -66,9 +81,9 @@ public class ReliableCookieService implements CookieService {
      * to let the timeouts be considered as failed calls. 
      */
      //Decorate with timeout
-    resource = new TimeoutEnabledClientResource(resource);
-    //Decorate with Circuitbreaker
-    resource = new CircuitbreakableClientResource(resource);
+    resource = new TimeoutEnabledClientResource(resource,timeout);
+    //Decorate with Circuitbreaker, with faultThreshold 2 and resettimelimit 10 seconds
+    resource = new CircuitbreakableClientResource(resource,new CircuitBreakerConfiguration(2, 10000));
     
   }
     

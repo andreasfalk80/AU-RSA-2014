@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import org.restlet.representation.Representation;
 import org.slf4j.LoggerFactory;
@@ -17,14 +17,15 @@ import org.slf4j.LoggerFactory;
 public class CircuitbreakableClientResource extends ClientResourceDecorator{
 	static org.slf4j.Logger log = LoggerFactory.getLogger(CircuitbreakableClientResource.class);
 	
-	private CircuitBreaker breaker = new ClosedCircuitBreaker();
+	private CircuitBreaker breaker;
 	
 	/**
 	 * 
 	 * @param originalClientResource is the ClientResource, that needs a CircuitBreaker.
 	 */
-	public CircuitbreakableClientResource(ClientResourceInterface originalClientResource){
+	public CircuitbreakableClientResource(ClientResourceInterface originalClientResource, CircuitBreakerConfiguration conf){
 		resource = originalClientResource;
+		breaker = new ClosedCircuitBreaker(conf);
 	}
 
 	/**

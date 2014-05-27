@@ -1,16 +1,17 @@
-package cs.rsa.ts14dist.circuitbreaker;
+package cs.rsa.ts14dist.clientresourcedecorator;
 
 import static org.junit.Assert.assertEquals;
 
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.restlet.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableClientResource.CircuitbreakableClientResource;
-import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
+import cs.rsa.ts14dist.clientresourcedecorator.CircuitbreakableClientResource;
+import cs.rsa.ts14dist.clientresourcedecorator.ClientResourceInterface;
 import cs.rsa.ts14dist.doubles.FakeClientResource;
 
 public class TestOpenCircuitBreaker {
@@ -18,11 +19,17 @@ public class TestOpenCircuitBreaker {
 	FakeClientResource res;
 	CircuitbreakableClientResource resource;
 
+	
+	@BeforeClass
+	public static void beforeClass(){
+		BasicConfigurator.configure();
+		
+	}
+	
 	@Before
 	public void setUp() throws Exception {
-		BasicConfigurator.configure();
 		res = new FakeClientResource();
-		resource = new CircuitbreakableClientResource((ClientResourceInterface)res);
+		resource = new CircuitbreakableClientResource((ClientResourceInterface)res,new CircuitBreakerConfiguration(2,500));
 		
 		//Bringing the Breaker into the Open state
 		res.setResourceToFail();
@@ -61,7 +68,7 @@ public class TestOpenCircuitBreaker {
 	@Test  
 	public void testCallsAreTriedAfterTimeLimit() throws InterruptedException{
 		try{
-			Thread.sleep(10500);
+			Thread.sleep(550);
 			
 			resource.get();
 		}

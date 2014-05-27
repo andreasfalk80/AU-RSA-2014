@@ -1,4 +1,4 @@
-package cs.rsa.ts14dist.circuitbreakableClientResource;
+package cs.rsa.ts14dist.clientresourcedecorator;
 import org.restlet.representation.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,17 +13,20 @@ import org.slf4j.LoggerFactory;
 public class ClosedCircuitBreaker implements CircuitBreaker {
 
 	static Logger log = LoggerFactory.getLogger(ClosedCircuitBreaker.class);
-	private int threshold = 2;
+	private CircuitBreakerConfiguration conf;
+	private int threshold;
 	private int faultCount = 0;
 
-	public ClosedCircuitBreaker() {
+	public ClosedCircuitBreaker(CircuitBreakerConfiguration conf) {
+		this.conf = conf;
+		threshold = this.conf.getFaultThreshold();
 		log.debug("CircuitBreaker entering Closed state");
 	}
 
 	@Override
 	public Representation call(CircuitbreakableClientResource conn) {
 		Representation result = null;
-		// do all the stuff to call the connetion.
+		// do all the stuff to call the connection.
 		try {
 			result = conn.executeGet();
 			// Følgende udføres kun hvis der ikke er exception
@@ -36,7 +39,7 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 			if (faultCount >= threshold) {
 				log.debug("number of faults passed threshold. Set to Open state");
 				// update state
-				conn.setBreaker(new OpenCircuitBreaker());
+				conn.setBreaker(new OpenCircuitBreaker(conf));
 			}
 			
 			// re throw exception

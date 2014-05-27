@@ -25,7 +25,7 @@ import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14dist.circuitbreakableClientResource.ClientResourceInterface;
+import cs.rsa.ts14dist.clientresourcedecorator.ClientResourceInterface;
 /**
  * 
  * @author Andreas

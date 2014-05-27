@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package cs.rsa.ts14dist.manual;
+package cs.rsa.ts14dist.cookie;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -23,7 +24,6 @@ import java.io.IOException;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import cs.rsa.ts14dist.cookie.CookieService;
@@ -31,15 +31,12 @@ import cs.rsa.ts14dist.cookie.ReliableCookieService;
 import cs.rsa.ts14dist.doubles.StubCookieServiceServerFastResponse;
 import cs.rsa.ts14dist.doubles.StubCookieServiceServerSlowResponse;
 
-/** MANUAL test of the Reliable CookieService
- * - you have to visually inspect that
- * something is coming back from the Cookie REST realService.
- * 
- * And - the rest realService must be running :)
- *  
+/**
+ * test of the Reliable CookieService
+ *   
  */
 
-public class TeztReliableCookieService {
+public class TestReliableCookieService {
 
 	static private CookieService dummyServiceFastResponse;
 	static private CookieService dummyServiceSlowresponse;
@@ -48,7 +45,9 @@ public class TeztReliableCookieService {
 	static StubCookieServiceServerFastResponse fastLocalServer; 
 	//On localhost:8183
 	static StubCookieServiceServerSlowResponse slowLocalServer;
-
+	//This testcase should run with a small timeout
+	static int Timeoutvalue = 500;
+	
 
 	@BeforeClass
 	public static void init() {
@@ -68,10 +67,10 @@ public class TeztReliableCookieService {
 	@Before
 	public void setup() {
 		//create ReliableCookieService based on the fast server
-		dummyServiceFastResponse = new ReliableCookieService("localhost", "8182");
+		dummyServiceFastResponse = new ReliableCookieService("localhost", "8182",Timeoutvalue);
 
 		//create ReliableCookieService based on the slow server
-		dummyServiceSlowresponse = new ReliableCookieService("localhost", "8183");
+		dummyServiceSlowresponse = new ReliableCookieService("localhost", "8183",Timeoutvalue);
 
 	}
 
@@ -81,17 +80,18 @@ public class TeztReliableCookieService {
 		String cookie = dummyServiceFastResponse.getNextCookie();
 		System.out.println(cookie);
 
-		//test that we got a different response
+		//test that we got a response, that is not the default, and that it is not null
+		assertNotNull(cookie);
 		assertTrue(!cookie.equals("Today's fortune cookie is unfortunately unavailable."));
 	}
 
 	@Test
-	public void shouldTimeoutAfter4Seconds() throws IOException {
+	public void shouldTimeoutAfterHalfaSecond() throws IOException {
 
 		long start = System.currentTimeMillis();  
 		dummyServiceSlowresponse.getNextCookie();
 		long end = System.currentTimeMillis();
-		assertTrue(end-start>4000 && end-start<4200);	
+		assertTrue(end-start>500 && end-start<525);	
 	}
 
 
