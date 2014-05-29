@@ -35,9 +35,7 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 			log.debug("Attempted call, after timeout periode completed. Attempting reset");
 			
 			//Vi forsøger om forbindelsen virker igen
-			CircuitBreaker tester = new HalfOpenCircuitBreaker(conf);
-			conn.setBreaker(tester);
-			result = tester.call(conn);
+			result = attemptReset(conn);
 		}
 		else{
 			log.debug("Attempted call, before timeout periode completed. ClientResource not called");
@@ -48,6 +46,13 @@ public class OpenCircuitBreaker implements CircuitBreaker {
 		}
 		return result;
 	}
+	
+	private Representation attemptReset(CircuitbreakableClientResource conn){
+		CircuitBreaker tester = new HalfOpenCircuitBreaker(conf);
+		conn.setBreaker(tester);
+		return tester.call(conn);
+	}
+
 	
 	@Override
 	public CircuitBreakerStates getBreakerState() {

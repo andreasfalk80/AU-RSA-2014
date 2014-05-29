@@ -46,6 +46,7 @@ public class FakeClientResource implements ClientResourceInterface {
 	public void setResourceToSucceed(){
 		fail = false;
 	}
+	
 
 	//Method to help verify testing, by returning the number of recieved calls
 	public int getCount(){
@@ -54,7 +55,7 @@ public class FakeClientResource implements ClientResourceInterface {
 	
 	
 	@Override
-	public Representation get() {
+	public Representation get(){
 		count ++;
 		log.debug("FakeClientResource recived get # " + count);
 		if(fail){

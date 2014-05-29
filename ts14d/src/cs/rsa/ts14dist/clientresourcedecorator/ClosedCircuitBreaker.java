@@ -37,9 +37,7 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 			log.debug("unsuccecssfull get, faultCount: "
 					+ faultCount);
 			if (faultCount >= threshold) {
-				log.debug("number of faults passed threshold. Set to Open state");
-				// update state
-				conn.setBreaker(new OpenCircuitBreaker(conf));
+				tripBreaker(conn);
 			}
 			
 			// re throw exception
@@ -48,7 +46,13 @@ public class ClosedCircuitBreaker implements CircuitBreaker {
 		return result;
 
 	}
-
+  
+	private void tripBreaker(CircuitbreakableClientResource conn){
+		log.debug("number of faults passed threshold. Set to Open state");
+		// update state
+		conn.setBreaker(new OpenCircuitBreaker(conf));
+	}
+	
 	@Override
 	public CircuitBreakerStates getBreakerState() {
 		return CircuitBreakerStates.CLOSED;

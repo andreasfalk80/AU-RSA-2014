@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import cs.rsa.ts14dist.cookie.ReliableCookieService;
 
 /**
- * TODO rewrite the javadoc for this class
  * The role as ConcreteDecorator in the Decorator pattern.<br/>
  * This class decorates any class that implements the ClientResourceInterface,
  * and more precisely its purpose is to decorate the SimpleClientResource(and in effect also the ClientResource)
@@ -29,7 +28,7 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 	
 	//this variable contains the result for the last sent request.
 	public static volatile Representation result;
-	//ID of the last request given to a callbackhandler, to make sure we don't process an old response.
+	//ID of the last request sent, to make sure we don't process an old response.
 	//This also means that there can only be one valid request at a time.
 	public volatile int currentRequest = 1;
 	

@@ -62,13 +62,11 @@ public class TestOpenCircuitBreaker {
 	
 	/*
 	 * Testing that calls received after the timeout/Timelimit is passed will get delegates to the ClientResource
-	 * Note, this test take 10 second, because of the wait for the circuitbreaker. 
-	 * (This could be faster if the timeout was coded as a parameter) 
 	 */
 	@Test  
 	public void testCallsAreTriedAfterTimeLimit() throws InterruptedException{
 		try{
-			Thread.sleep(550);
+			Thread.sleep(550); //wait for the waitperiode to end, and try.
 			
 			resource.get();
 		}

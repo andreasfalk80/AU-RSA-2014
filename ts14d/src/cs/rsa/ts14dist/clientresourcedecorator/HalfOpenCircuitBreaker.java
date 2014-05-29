@@ -27,15 +27,24 @@ public class HalfOpenCircuitBreaker implements CircuitBreaker {
 		try {
 			result = conn.executeGet();
 			// hvis det gik godt
-			log.debug("successfull get. Resetting to Closed state");
-			conn.setBreaker(new ClosedCircuitBreaker(conf));
+			resetBreaker(conn);
 		} catch (Exception e) {
-			log.debug("unsuccessfull get. Return to Open state");
-			conn.setBreaker(new OpenCircuitBreaker(conf));
+			tripBreaker(conn);
 			throw e;
 		}
 		return result;
 	}
+	
+	private void tripBreaker(CircuitbreakableClientResource conn){
+		log.debug("unsuccessfull get. Return to Open state");
+		conn.setBreaker(new OpenCircuitBreaker(conf));
+	}
+
+	private void resetBreaker(CircuitbreakableClientResource conn){
+		log.debug("successfull get. Resetting to Closed state");
+		conn.setBreaker(new ClosedCircuitBreaker(conf));
+	}
+
 	
 	@Override
 	public CircuitBreakerStates getBreakerState() {

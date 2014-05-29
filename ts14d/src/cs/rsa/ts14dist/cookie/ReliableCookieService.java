@@ -52,12 +52,12 @@ public class ReliableCookieService implements CookieService {
 	private ClientResourceInterface resource;
 
   /**
-   * Creates a ReliableCookieService, with a default timeout of 4000 milliseconds
+   * Creates a ReliableCookieService, with a default timeout of 25000 milliseconds
    * @param hostname
    * @param port
    */
 	  public ReliableCookieService(String hostname, String port) {
-		  this(hostname,port,4000);
+		  this(hostname,port,25000);
 	  }
 	
 	/**
@@ -76,14 +76,15 @@ public class ReliableCookieService implements CookieService {
      * Part of the Decorator pattern solution
      */
     resource = new SimpleClientResource(resourceHost);
-    /*The ordering of the decorators are very important,
+   
+    /*The ordering of the following decorators are very important,
      * since the circuitbreaker needs to call through the timeoutenabled Clientresource, 
      * to let the timeouts be considered as failed calls. 
      */
      //Decorate with timeout
     resource = new TimeoutEnabledClientResource(resource,timeout);
-    //Decorate with Circuitbreaker, with faultThreshold 2 and resettimelimit 10 seconds
-    resource = new CircuitbreakableClientResource(resource,new CircuitBreakerConfiguration(2, 10000));
+    //Decorate with Circuitbreaker, with faultThreshold 5 and resettimelimit 10 seconds
+    resource = new CircuitbreakableClientResource(resource,new CircuitBreakerConfiguration(5, 10000));
     
   }
     
