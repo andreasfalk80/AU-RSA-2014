@@ -1,4 +1,5 @@
 /*
+
  * Copyright 2014 Henrik Baerbak Christensen, Aarhus University
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -132,8 +133,8 @@ public class StandardServerRequestHandler implements ServerRequestHandler {
     try {
       cookie += cookieService.getNextCookie();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    	
+    	//do nothing 
     }
     return cookie;
   } 

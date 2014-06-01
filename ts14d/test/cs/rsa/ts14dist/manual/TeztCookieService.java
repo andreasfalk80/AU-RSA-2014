@@ -24,7 +24,6 @@ import org.junit.*;
 
 import cs.rsa.ts14dist.common.Constants;
 import cs.rsa.ts14dist.cookie.*;
-
 /** MANUAL test used in TDD of the implementation of
  * CookieService with real binding to the DigitalOcean
  * instanse - you have to visually inspect that

@@ -16,11 +16,14 @@
  
 package cs.rsa.ts14dist.cookie;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.StringWriter;
 
 import org.restlet.representation.Representation;
 import org.restlet.resource.ClientResource;
 import org.restlet.resource.ResourceException;
+
+
 
 /** Standard implementation of the CookieService that
  * makes a REST call to http://(hostname):(port)/rsa/cookie
@@ -44,25 +47,23 @@ public class StandardCookieService implements CookieService {
   public StandardCookieService(String hostname, String port) {
     // Create the client resource  
     String resourceHost = "http://"+hostname+":"+port+"/rsa/cookie";
-    resource = new ClientResource(resourceHost); 
+    resource = new ClientResource(resourceHost);
   }
 
   @Override
   public String getNextCookie() throws IOException {
-    String result = "fault";
+    String result = "fault"; 
     // Write the response entity on the console
     try {
       
       Representation repr = resource.get();
-      
+   	
       StringWriter writer = new StringWriter();
-      
       repr.write(writer);
       result = writer.toString();
       
     } catch (ResourceException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    	//Do nothing 
     } 
 
     return result;
