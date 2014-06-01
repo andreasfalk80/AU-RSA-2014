@@ -30,7 +30,7 @@ public class TeztMongoConnector {
   private String timesagLines;
   private String user;
 
-  private String IPOfMongo = "192.168.237.130";
+  private String IPOfMongo = "192.168.136.130";
   
   @Before
   public void setUp() throws Exception {

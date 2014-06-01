@@ -17,10 +17,13 @@
 package cs.rsa.ts14dist.client; 
  
 import java.io.*; 
- 
+
 import org.json.simple.JSONObject; 
- 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import cs.rsa.ts14.framework.LineType; 
+import cs.rsa.ts14dist.appserver.RabbitMQDaemon;
 import cs.rsa.ts14dist.common.*; 
  
 /** Standard framework implementation of the client request handler role.
@@ -28,6 +31,7 @@ import cs.rsa.ts14dist.common.*;
  * @author Henrik Baerbak Christensen, Aarhus University
  */
 public class StandardClientRequestHandler implements ClientRequestHandler { 
+  Logger logger = LoggerFactory.getLogger(StandardClientRequestHandler.class);
  
   public enum Priority { LOW, HIGH };
 
@@ -91,6 +95,7 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
   private JSONObject requestAndAwaitReply(JSONObject requestJson, Priority priority) 
       throws IOException { 
     JSONObject replyJson = null;
+    logger.info("Priority:" + priority.toString());
     switch(priority) {
     case HIGH:
     	replyJson = connector.sendHighPriorityRequestAndBlockUntilReply(requestJson);
