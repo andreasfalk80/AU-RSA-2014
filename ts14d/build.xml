@@ -64,12 +64,36 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
 
     javadoc:   Generate javadoc in the 'javadoc' folder
     
-    daemon:    Run daemon, use -Dmqip=(new ip) to set IP of the
-                 RabbitMQ, for Level 1 testing
+    daemonHigh:    
+    		   Run daemon, 
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 for Level 1 testing (fake storage)
+
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 use -Ddbip=(the mongo ip) to set IP of the MongoDB
+                 for Level 2 testing (preproduction)
+    	
+    			 use -Dprio=HIGH for creating a high priority queue consumer
+    	
+	daemonLow:    
+    		   Run daemon, 
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 for Level 1 testing (fake storage)
+
+                 use -Dmqip=(the mq ip) to set IP of the RabbitMQ
+                 use -Ddbip=(the mongo ip) to set IP of the MongoDB
+                 for Level 2 testing (preproduction)
+    	
+    			 use -Dprio=LOW for creating a low priority queue consumer
                  
     cmd:       Run TS14-D commandline tool, 
-                 use -Dmqip=() to set IP and Level 1 testing
+                 use -Dmqip=(the mq ip) to set IP of MQ for Level 1 testing
                  or -Dmqip=none to run local Level 0 testing
+
+    load:      Run TS14-D client load generator,
+                 use -Dmqip=(the mq ip) to set IP of MQ
+                 use -Duser=(username) to set user to generate load for
+                   the latter defaults to 'user01'
     	
   Author: Henrik Baerbak Christensen
     </echo>
@@ -98,8 +122,6 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
          we copy it manually to the lib folder -->
     <copy file="lib-bootstrap/org.restlet.jar"
           todir="${lib.dir}"/>
-  	 <copy file="lib-bootstrap/mockito-all-1.9.5.jar"
-  	          todir="${lib.dir}"/>
     <ivy:retrieve/>
   </target>    
   
@@ -219,22 +241,42 @@ TS14-D project / Reliable Software and Architecture - Mandatory project
 
 
   <!-- execution -->
-  <property name="mqip" value="192.168.184.128"/>
-  <!--
   <property name="mqip" value="none"/>
-  -->
+  <property name="dbip" value="none"/>
+  <property name="user" value="user01"/>
+  <property name="prioHigh" value="HIGH"/>
+  <property name="prioLow" value="LOW"/>
 
-  <target name="daemon" depends="build-all">
+  <target name="daemonHigh" depends="build-all">
     <java classpathref="run.path.id" 
 	  classname="cs.rsa.ts14dist.manual.TS14DDaemon">
       <arg value="${mqip}"/>
+      <arg value="${dbip}"/>
+      <arg value="${prioHigh}"/>
     </java>
   </target>
+
+	<target name="daemonLow" depends="build-all">
+	    <java classpathref="run.path.id" 
+		  classname="cs.rsa.ts14dist.manual.TS14DDaemon">
+	      <arg value="${mqip}"/>
+	      <arg value="${dbip}"/>
+	      <arg value="${prioLow}"/>
+	    </java>
+	  </target>
 
   <target name="cmd" depends="build-all">
     <java classpathref="run.path.id" 
 	  classname="cs.rsa.ts14dist.manual.TS14DCmd">
       <arg value="${mqip}"/>
+    </java>
+  </target>
+
+  <target name="load" depends="build-all">
+    <java classpathref="run.path.id" 
+	  classname="cs.rsa.ts14dist.manual.TS14DLoad">
+      <arg value="${mqip}"/>
+      <arg value="${user}"/>
     </java>
   </target>
 

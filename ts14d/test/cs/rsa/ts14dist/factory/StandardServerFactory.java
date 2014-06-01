@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */ 
-package cs.rsa.ts14.Golf.statemachine;
+ 
+package cs.rsa.ts14dist.factory;
 
-import cs.rsa.ts14.framework.LineSequenceState;
-import cs.rsa.ts14.framework.LineType;
+import cs.rsa.ts14dist.appserver.ServerAbstractFactory;
+import cs.rsa.ts14dist.database.*;
 
-/** Define a ConcreteState for the LineSequenceState
+/** Create a 'standard' server factory - with real MongoDB connection;
+ * however the TS14 sub system is just simple test doubles.
  * 
  * @author Henrik Baerbak Christensen, Aarhus University
- *
  */
+public class StandardServerFactory extends Level1ServerFactory implements
+    ServerAbstractFactory {
 
-public class IllegalState implements LineSequenceState {
+  private String dbip;
 
-  private String errorLine;
-
-  public IllegalState(String errorLine) {
-    this.errorLine = errorLine;
+  public StandardServerFactory(String dbip) {
+    this.dbip = dbip;
   }
 
   @Override
-  public String lastError() {
-    return errorLine;
-  }
+  protected Storage createStorage() {
+    Storage storage = new MongoStorage(dbip, "ts14db");
 
-
-  @Override
-  public LineSequenceState transitionOn(LineType assignmentLine) {
-    return this; // Stay in illegal state
+    return storage;
   }
 
 }

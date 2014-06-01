@@ -22,7 +22,7 @@ import cs.rsa.ts14.framework.LineType;
  
 /** Client request handler is responsible for mediating contact
  * from the client to the server. Pattern is described in
- * Patterns of Software Architecture, Volume 4.
+ * Patterns of Software Architecture, Volume 4, p. 246.
  *  
  * @author Henrik Baerbak Christensen, Aarhus University
  */

@@ -12,38 +12,50 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
- 
-package cs.rsa.ts14dist.doubles; 
- 
-import java.io.IOException; 
- 
-import org.json.simple.*; 
- 
-import cs.rsa.ts14dist.appserver.ServerRequestHandler; 
-import cs.rsa.ts14dist.client.Connector; 
- 
-/** This is essentially a fake object as it is an implementation
- * of the client-to-server connector that is just a local method
- * call. Thus it works correctly (except for error conditions).
+ */
+
+package cs.rsa.ts14dist.doubles;
+
+import java.io.IOException;
+
+import org.json.simple.*;
+
+import cs.rsa.ts14dist.appserver.ServerRequestHandler;
+import cs.rsa.ts14dist.client.Connector;
+
+/**
+ * This is essentially a fake object as it is an implementation of the
+ * client-to-server connector that is just a local method call. Thus it works
+ * correctly (except for error conditions).
  * 
  * @author Henrik Baerbak Christensen, Aarhus University
  */
-public class InMemoryCallConnector implements Connector { 
-   
-  private ServerRequestHandler serverRequestHandler; 
- 
-  public InMemoryCallConnector(ServerRequestHandler serverRequestHandler) { 
-    this.serverRequestHandler = serverRequestHandler; 
-  } 
- 
-  @Override 
-  public JSONObject sendRequestAndBlockUntilReply(JSONObject request) throws IOException { 
- 
-    // Very simple - the request reply protocol boils down to a simple method call... 
-    JSONObject reply = serverRequestHandler.handleRequest( request ); 
-     
-    return reply; 
-  } 
- 
-} 
+public class InMemoryCallConnector implements Connector {
+
+	private ServerRequestHandler serverRequestHandler;
+
+	public InMemoryCallConnector(ServerRequestHandler serverRequestHandler) {
+		this.serverRequestHandler = serverRequestHandler;
+	}
+
+	@Override
+	public JSONObject sendHighPriorityRequestAndBlockUntilReply(
+			JSONObject request) throws IOException {
+		// Very simple - the request reply protocol boils down to a simple
+		// method call...
+		JSONObject reply = serverRequestHandler.handleRequest(request);
+
+		return reply;
+	}
+
+	@Override
+	public JSONObject sendLowPriorityRequestAndBlockUntilReply(
+			JSONObject request) throws IOException {
+		// Very simple - the request reply protocol boils down to a simple
+		// method call...
+		JSONObject reply = serverRequestHandler.handleRequest(request);
+
+		return reply;
+	}
+
+}

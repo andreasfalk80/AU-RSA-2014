@@ -66,7 +66,5 @@ public interface TimesagLineProcessor {
    * @return the report built
    */
   String getReport();
-  
-  LineSequenceState getState();
 
 }

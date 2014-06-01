@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */ 
+ 
+package cs.rsa.ts14dist.client;
 
-package cs.rsa.ts14.doubles;
+import java.io.IOException;
 
-/** Handy little data class for keeping week data.
- * Maybe interesting to move to the source tree?
- * 
- * @author Henrik Baerbak Christensen, Aarhus University
- */
-public class WeekData {
-  // The number of the week
-  public int weekNumber;
-  // The number of hours worked this week
-  public double hoursWorked;
-  // The number of working days this week
-  public int workDays;
-  
-  public String toString() {
-    return "WeekData: ("+weekNumber+","+hoursWorked+","+workDays+")";
+import cs.rsa.ts14dist.appserver.RabbitMQRPCConnector;
+
+public class StandardClientFactory implements ClientAbstractFactory {
+
+  private String mqip;
+
+  public StandardClientFactory(String mqip) {
+    this.mqip = mqip;
+
   }
+
+  @Override
+  public StandardClientRequestHandler createClientRequestHandler()
+      throws IOException {
+    Connector connector;
+    connector = new RabbitMQRPCConnector(mqip);
+    return new StandardClientRequestHandler(connector);
+  }
+
 }

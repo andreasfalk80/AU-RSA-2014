@@ -47,6 +47,12 @@ import cs.rsa.ts14dist.doubles.*;
  * has trimmed served side processing and marshalling, 
  * and next the remaining use cases are introduced to 
  * provide near full behavior of the client. 
+ * 
+ * Note: Abstract factories have been introduced for
+ * both client and server side request handlers, however I have kept
+ * the 'raw' initialization of delegates in this
+ * test case to demonstrate the process from
+ * first principles.
  *  
  * @author Henrik Baerbak Christensen, Aarhus University 
  */ 

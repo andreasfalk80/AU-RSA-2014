@@ -33,13 +33,20 @@ import org.json.simple.JSONObject;
  */
 public interface Connector { 
  
-  /** send a request to the server and block (synchroneous call) until
+  /** send a high priority request to the server and block (synchroneous call) until
    * a reply has been received.
    * @param request JSON object representing the request
    * @return the reply as JSON object
    * @throws IOException
    */
-  public JSONObject sendRequestAndBlockUntilReply(JSONObject request) throws IOException;  
+  public JSONObject sendHighPriorityRequestAndBlockUntilReply(JSONObject request) throws IOException;  
   
-   
+  /** send a low priority request to the server and block (synchroneous call) until
+   * a reply has been received.
+   * @param request JSON object representing the request
+   * @return the reply as JSON object
+   * @throws IOException
+   */
+  public JSONObject sendLowPriorityRequestAndBlockUntilReply(JSONObject request) throws IOException; 
+  
 } 

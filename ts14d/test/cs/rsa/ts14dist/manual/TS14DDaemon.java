@@ -16,19 +16,21 @@
  
 package cs.rsa.ts14dist.manual; 
  
-import cs.rsa.ts14.bravo.BravoTS14Facade;
 import cs.rsa.ts14dist.appserver.RabbitMQDaemon;
+import cs.rsa.ts14dist.appserver.ServerAbstractFactory;
 import cs.rsa.ts14dist.appserver.ServerRequestHandler;
-import cs.rsa.ts14dist.appserver.StandardServerRequestHandler;
-import cs.rsa.ts14dist.appserver.TS14Facade;
-import cs.rsa.ts14dist.common.Constants;
-import cs.rsa.ts14dist.cookie.CookieService;
-import cs.rsa.ts14dist.cookie.StandardCookieService;
-import cs.rsa.ts14dist.database.Storage;
-import cs.rsa.ts14dist.doubles.FakeObjectStorage;
+import cs.rsa.ts14dist.factory.Level1ServerFactory;
+import cs.rsa.ts14dist.factory.StandardServerFactory;
  
 /** The main class of the TS14-D daemon. All delegates are
  * configured and the daemon thread started.
+ * 
+ * Requires two arguments: 
+ *   Arg 1: IP/name of rabbitmq node
+ *   Arg 2: IP/name of mongodb node
+ *   Arg 3: Priority of consumer (LOW, HIGH) (Default: HIGH)
+ *   
+ *   if the second is 'none' then a fake object storage is used
  * 
  * @author Henrik Baerbak Christensen, Aarhus University
  */
@@ -38,30 +40,32 @@ public class TS14DDaemon {
  
   public static void main(String[] args) throws InterruptedException { 
     String RabbitMQ_IPAddress = args[0]; 
+    String MongoDB_IPAddress = args[1];
+    RabbitMQDaemon.Priority priority = RabbitMQDaemon.Priority.HIGH;
+    if ("LOW".equals(args[2].toUpperCase()))
+    	priority = RabbitMQDaemon.Priority.LOW;
      
-    // Replace actual database with fake object/spy 
-    Storage storage = new FakeObjectStorage();  
-     
-    // The TS14 domain system  
-    TS14Facade facade = new BravoTS14Facade(); 
+    ServerAbstractFactory factory;
     
-    // The fortune cookie service
-    CookieService cookieService = 
-        new StandardCookieService(Constants.DIGITALOCEAN_INSTANCE_IP, 
-            Constants.COOKIE_REST_PORT);
+    if ( MongoDB_IPAddress.equals("none") ) {
+    factory = new Level1ServerFactory();
+    } else {
+      factory = new StandardServerFactory(MongoDB_IPAddress);
+    }
  
-      // Couple the server side request handler (POSA 4) 
+    // Couple the server side request handler (POSA 4) 
     // to the storage system and to the TS14 domain 
-    ServerRequestHandler serverRequestHandler = 
-        new StandardServerRequestHandler(storage, facade, cookieService); 
+    ServerRequestHandler serverRequestHandler = factory.createServerRequestHandler(); 
  
     System.out.println("=== TS14-D Server side Daemon ==="); 
     System.out.println(" RabbitMQ on IP: "+ RabbitMQ_IPAddress); 
+    System.out.println(" MongoDB  on IP: "+ MongoDB_IPAddress);
+    System.out.println(" Priority of consumer: "+ priority.toString());
     System.out.println("  All logging going to log file...");
     System.out.println(" Use ctrl-c to terminate!"); 
      
     // Create the server side daemon, and start it in a thread 
-    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler); 
+    Runnable mqDaemon = new RabbitMQDaemon(RabbitMQ_IPAddress, serverRequestHandler, priority); 
     daemon = new Thread(mqDaemon); 
     daemon.start(); 
      

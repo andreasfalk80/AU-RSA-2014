@@ -17,16 +17,13 @@
 package cs.rsa.ts14dist.manual; 
  
 import static org.junit.Assert.assertTrue; 
- 
+
 import java.io.*; 
- 
+
 import cs.rsa.ts14.framework.LineType; 
-import cs.rsa.ts14dist.appserver.*; 
 import cs.rsa.ts14dist.client.*; 
 import cs.rsa.ts14dist.common.Constants; 
-import cs.rsa.ts14dist.cookie.CookieService;
-import cs.rsa.ts14dist.database.Storage; 
-import cs.rsa.ts14dist.doubles.*; 
+import cs.rsa.ts14dist.factory.*;
  
 /** A very simple driver for the client side of TS14-D. A classic
  * read-eval-loop command line shell.
@@ -36,50 +33,30 @@ import cs.rsa.ts14dist.doubles.*;
 public class TS14DCmd { 
    
   public static void main(String[] args) throws IOException { 
+    ClientAbstractFactory factory = null;
     String mqip = "none"; 
-    if ( args.length > 0 ) { mqip = args[0]; } 
-    new TS14DCmd(mqip).readEvalLoop(); 
-  } 
- 
-  private Storage storage; 
-  private ServerRequestHandler serverRequestHandler; 
-  private StandardClientRequestHandler requestHandler; 
-  private TS14Facade facade; 
-   
-  private String user = "rsa"; 
-   
-  public TS14DCmd(String mqip) throws IOException { 
-     
-    // Replace actual database with fake object/spy 
-    storage = new FakeObjectStorage();  
-
-    // The TS14 domain system  
-    facade = new TS14FacadeDouble(); 
-
-    // The fortune cookie service
-    CookieService cookieService = new StubCookieService();
-
-    // Couple the server side request handler (POSA 4) 
-    // to the storage system and to the TS14 domain 
-    serverRequestHandler =  
-        new StandardServerRequestHandler(storage, facade, cookieService); 
-
-    // Define a local in memory call connector to tie client 
-    // side with server side 
-    Connector connector; 
-
-    if ( mqip.equals("none") ) { 
-      connector = new InMemoryCallConnector(serverRequestHandler); 
-    } else { 
-      connector = new RabbitMQRPCConnector(mqip); 
-    } 
-
-    // Finally define the client side request handler, and 
-    // couple it to the defined connector. 
-    requestHandler = new StandardClientRequestHandler(connector); 
-
+    if ( args.length > 0 ) { 
+      mqip = args[0]; 
+    }
+    if ( mqip.equals("none") ) {
+      factory = new Level0ClientFactory();
+    } else {
+      factory = new StandardClientFactory( mqip );
+    }
+    
     System.out.println("=== Welcome to TS14-D command line ==="); 
     System.out.println("-- RabbitMQ connector at: "+ mqip); 
+
+    new TS14DCmd(factory).readEvalLoop(); 
+  } 
+ 
+  private ClientRequestHandler requestHandler; 
+  private String user = "rsa"; 
+   
+  public TS14DCmd(ClientAbstractFactory factory) throws IOException { 
+    // Define the client side request handler, and 
+    // couple it to the defined connector. 
+    requestHandler = factory.createClientRequestHandler();  
   } 
    
   public void readEvalLoop() { 

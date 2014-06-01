@@ -19,7 +19,7 @@ package cs.rsa.ts14.standard;
 import java.util.StringTokenizer;
 
 import cs.rsa.ts14.framework.*;
-import cs.rsa.ts14.Golf.statemachine.IllegalState;
+import cs.rsa.ts14.statemachine.IllegalState;
 
 /** Default framework implementation of the TimesagLineProcessor. The
  * line type classifier and the report builder are hotspots.
@@ -166,9 +166,5 @@ public class StandardTimesagLineProcessor implements TimesagLineProcessor {
       i++;
     }
     return tokenList;
-  }
-  
-  public LineSequenceState getState() {
-	  return state;
   }
 }
