@@ -1,5 +1,7 @@
 package cs.rsa.ts14dist.clientresourcedecorator;
 
+import java.io.IOException;
+
 import org.restlet.Request;
 import org.restlet.Response;
 import org.restlet.Uniform;
@@ -56,7 +58,7 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 	  		synchronized (TimeoutEnabledClientResource.class) {
 	  			//we set the currentrequestnumber, so we can identify the response belonging to the request
 				resource.setAttribute(paramName, currentRequest);
-		//		log.debug("Get called with currentRequest: " +currentRequest);
+				log.debug("Sending a request with id: " + currentRequest);
 	  		}
 			long start = System.currentTimeMillis();
 			resource.get(); //async call!!
@@ -78,13 +80,15 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 		//We increment the currentRequest, to invalidate any old response recieved
 		synchronized (TimeoutEnabledClientResource.class) {
 			currentRequest++;
-//			log.debug("We have either recived or timed out, so currentRequest is now : " +currentRequest);
+//			log.debug("We updated currentRequest to : " +currentRequest);
 		}
 		if(TimeoutEnabledClientResource.result == null){
+			log.debug("Time out occured");
 			//Her faker vi bare en exception fra Restlet frameworket, da det er denne type exception der ville komme normalt.
 			//TODO er det en god ide, eller skal den kaldende vide at der circuitbreakeren er åben??
 			throw new ResourceException(1000,"Connection error","Unable to establish a connection","unknown");
 		}
+		log.debug("Result is recieved");
 		return TimeoutEnabledClientResource.result;
 	}
 	
@@ -106,11 +110,12 @@ public class TimeoutEnabledClientResource extends ClientResourceDecorator{
 					//we only save the response if the ID for the handler corresponds to the current request.
 					if(getCurrentRequest().equals(requestID) ){
 						TimeoutEnabledClientResource.result = arg1.getEntity();
-						log.debug("Correct ID on handler - response is saved");
+						//We cant fetch and log the resposne, since that means it is not available for the main application
+						//log.debug("Correct ID on handler - response is saved " + requestID + " response recieved " + arg1.getEntityAsText());
 					}
 					else{
 						//else the response came to late
-						log.debug("Wrong ID on handler response is discarded. Expected value was " + getCurrentRequest());
+						log.debug("Wrong ID on handler response is discarded. Found value " + requestID+ " Expected value was " + getCurrentRequest()  + " response recieved " + arg1.getEntityAsText());
 					}
 				}
 			}

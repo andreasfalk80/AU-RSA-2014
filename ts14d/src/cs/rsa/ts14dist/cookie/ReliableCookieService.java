@@ -57,7 +57,7 @@ public class ReliableCookieService implements CookieService {
    * @param port
    */
 	  public ReliableCookieService(String hostname, String port) {
-		  this(hostname,port,25000);
+		  this(hostname,port,10000);
 	  }
 	
 	/**

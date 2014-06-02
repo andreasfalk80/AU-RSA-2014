@@ -34,6 +34,7 @@ public class CircuitbreakableClientResource extends ClientResourceDecorator{
 	
 	@Override
 	public Representation get(){
+			log.debug("Request is delegated to circuit breaker");
 			return breaker.call(this);
 	}
 	
