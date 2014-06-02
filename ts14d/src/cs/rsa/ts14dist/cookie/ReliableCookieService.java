@@ -83,8 +83,8 @@ public class ReliableCookieService implements CookieService {
      */
      //Decorate with timeout
     resource = new TimeoutEnabledClientResource(resource,timeout);
-    //Decorate with Circuitbreaker, with faultThreshold 5 and resettimelimit 10 seconds
-    resource = new CircuitbreakableClientResource(resource,new CircuitBreakerConfiguration(5, 10000));
+    //Decorate with Circuitbreaker, with faultThreshold 2 and resettimelimit 10 seconds
+    resource = new CircuitbreakableClientResource(resource,new CircuitBreakerConfiguration(2, 10000));
     
   }
     
