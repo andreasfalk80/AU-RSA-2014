@@ -10,13 +10,18 @@ public class MongoStorage implements Storage {
 
   private DBCollection coll;
   private Mongo mongoInstance;
+  private DB db;
   
   Logger logger = LoggerFactory.getLogger(MongoStorage.class); 
 
   public MongoStorage(String mongoAddress, String databaseName) {
     mongoInstance = null;
+    MongoOptions options = new MongoOptions();
+    options.setConnectTimeout(10000); // initial connection
+    options.setSocketTimeout(10000); // for every request/querey
+
     try {
-      mongoInstance = new MongoClient(mongoAddress);
+      mongoInstance = new Mongo(mongoAddress, options);
     } catch (UnknownHostException e) {
       e.printStackTrace();
     } catch (MongoException e) {
@@ -24,8 +29,9 @@ public class MongoStorage implements Storage {
     }
 
     mongoInstance.setWriteConcern(WriteConcern.SAFE);
+
     // get handle to the required database
-    DB db = mongoInstance.getDB( databaseName );
+    db = mongoInstance.getDB( databaseName );
 
     // get a collection object to work with
     coll = db.getCollection("timesag");
@@ -43,6 +49,10 @@ public class MongoStorage implements Storage {
 
   @Override
   public BasicDBObject getDocumentFor(String userName) {
+    
+    //Fail Fast
+    verifyConnection();
+ 
     // Define a Mongo query
     BasicDBObject query = new BasicDBObject();
     // set criteria on pid
@@ -57,6 +67,10 @@ public class MongoStorage implements Storage {
 
   @Override
   public void updateDocument(String user, BasicDBObject document) {
+
+    //Fail Fast
+    //verifyConnection(); already done in getDocumentFor() ...
+
     // The API of the Storage is a bit unfortunate, as Mongo
     // has special method for either inserting a new document
     // or updating an existing; therefore the code becomes
@@ -72,6 +86,17 @@ public class MongoStorage implements Storage {
       document.put("_id", original.get("_id"));
       coll.save(document);
       logger.trace("Mongo/updating existing document for user "+user);
+    }
+  }
+
+  private void verifyConnection()
+  {
+    BasicDBObject ping = new BasicDBObject("ping", "1");
+    try {
+      db.command(ping);
+    } catch (MongoException e) {
+      logger.trace("Mongo Ping failed");
+      throw e; // rethrow
     }
   }
 

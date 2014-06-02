@@ -22,7 +22,9 @@ import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cs.rsa.ts14.framework.LineType; 
+
+import cs.rsa.ts14.bravo.*;
+import cs.rsa.ts14.framework.*; 
 import cs.rsa.ts14dist.appserver.RabbitMQDaemon;
 import cs.rsa.ts14dist.common.*; 
  
@@ -44,19 +46,37 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
   @Override 
   public LineType addLine(String user, String ts14Line) throws IOException { 
     // Build the json request object 
-    JSONObject requestJson =  
-        CommandLanguage.createRequestObject(user, Constants.ADDLINE_REQUEST, ts14Line); 
-     
-    // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.HIGH); 
-     
-    // no error, so extract the reply from the reply object 
-    // and cast it to its proper type - bit tedious as the 
-    // values is SOMETIMES long and SOMETIMES int depending 
-    // on the distributed or non-distributed case. 
-    String asString = replyJson.get(Constants.RETURNVALUE_KEY).toString(); 
-    int boxedIndex = Integer.parseInt(asString); 
-    LineType lineType = LineType.values()[boxedIndex]; 
+    JSONObject requestJson = CommandLanguage.createRequestObject(user, Constants.ADDLINE_REQUEST, ts14Line); 
+    LineType lineType = LineType.INVALID_LINE;
+
+    if(ts14Line.length() > Constants.MAX_LINE_SIZE)
+    {
+      System.out.println("Line too long");
+    }
+    else 
+    {
+      // Compute an answer for the given added line 
+      LineTypeClassifierStrategy classifier = new BravoLineTypeClassifierStrategy();
+      lineType = classifier.classify(ts14Line); 
+       
+      // if the line type is legal, compose a reply, and update 
+      // the database 
+      if ( lineType != LineType.INVALID_LINE ) {  
+        try{ 
+          // send the request over the connector and retrieve the reply object 
+          JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.HIGH); 
+          // no error, so extract the reply from the reply object 
+          // and cast it to its proper type - bit tedious as the 
+          // values is SOMETIMES long and SOMETIMES int depending 
+          // on the distributed or non-distributed case. 
+          String asString = replyJson.get(Constants.RETURNVALUE_KEY).toString(); 
+          int boxedIndex = Integer.parseInt(asString); 
+          lineType = LineType.values()[boxedIndex]; 
+        } catch (RuntimeException e) {
+          System.out.println(e.getMessage());
+        }
+      }
+    }
  
     return lineType; 
   } 
@@ -64,29 +84,35 @@ public class StandardClientRequestHandler implements ClientRequestHandler {
   @Override 
   public String getContents(String user) throws IOException { 
     // Build the json request object 
-    JSONObject requestJson =  
-        CommandLanguage.createRequestObject(user, Constants.GETCONTENTS_REQUEST, "notused"); 
- 
-    // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
- 
-    // Extract the return value 
-    String report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
-    return report; 
+    JSONObject requestJson = CommandLanguage.createRequestObject(user, Constants.GETCONTENTS_REQUEST, "notused"); 
+    String report;
+
+    try{
+      // send the request over the connector and retrieve the reply object 
+      JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
+      // Extract the return value 
+      report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
+    } catch (RuntimeException e) {
+      report = e.getMessage();
+    }
+     return report; 
   } 
  
  
   @Override 
   public String getReport(String user, String overviewType) throws IOException { 
     // Build the json request object 
-    JSONObject requestJson =  
-        CommandLanguage.createRequestObject(user, Constants.GETREPORT_REQUEST, overviewType); 
- 
-    // send the request over the connector and retrieve the reply object 
-    JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
- 
-    // Extract the return value 
-    String report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
+    JSONObject requestJson = CommandLanguage.createRequestObject(user, Constants.GETREPORT_REQUEST, overviewType); 
+    String report;
+    try{
+      // send the request over the connector and retrieve the reply object 
+      JSONObject replyJson = requestAndAwaitReply(requestJson, Priority.LOW); 
+      // Extract the return value 
+      report = (String) replyJson.get(Constants.RETURNVALUE_KEY); 
+    } catch (RuntimeException e) {
+      report = e.getMessage();
+    }
+
     return report; 
   } 
    

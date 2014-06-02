@@ -68,33 +68,70 @@ public class StandardServerRequestHandler implements ServerRequestHandler {
       // if the line type is legal, compose a reply, and update 
       // the database 
       if ( lineType != LineType.INVALID_LINE ) {  
-        // define the return value of this method 
-        reply = CommandLanguage.createValidReplyWithReturnValue( lineType.ordinal() ); 
- 
-        // update the database with the new contents 
-        updateContentsForUserWithNewLine(user, newLineToAdd); 
+         // update the database with the new contents 
+        if(updateContentsForUserWithNewLine(user, newLineToAdd)) {
+          //success, define the return value of this method 
+          reply = CommandLanguage.createValidReplyWithReturnValue( lineType.ordinal() ); 
+        }
+        else {
+          //errror
+          reply = CommandLanguage.createInvalidReplyWithExplantion("Update of docment failed, document to too big"); 
+        } 
+
       } else { 
         // invalid line type - tell the client 
         reply = CommandLanguage.createInvalidReplyWithExplantion("Line: #"+newLineToAdd+"# is invalid line type"); 
       } 
     } else if ( command.equals(Constants.GETREPORT_REQUEST) ) { 
       // get the contents of the timesag 
-      BasicDBObject dbo = storage.getDocumentFor(user); 
-      String contents = dbo.getString("contents"); 
- 
-      // get the required type of report 
-      String reporttype = request.get(Constants.PARAMETER_KEY).toString(); 
+
+      try {
+        BasicDBObject dbo = storage.getDocumentFor(user); 
+
+        if(dbo == null){
+          reply = CommandLanguage.createInvalidReplyWithExplantion("Document for user not found"); 
+        }
+        else {
+          String contents = dbo.getString("contents"); 
+          if(contents.length() > Constants.MAX_DOCUMENT_SIZE) {
+            reply = CommandLanguage.createInvalidReplyWithExplantion("Document too big for report generation"); 
+          }
+          else {
+            // get the required type of report 
+            String reporttype = request.get(Constants.PARAMETER_KEY).toString(); 
        
-      // Run contents through the processor 
-      String report = generateReport(contents, reporttype); 
-       
-      reply = CommandLanguage.createValidReplyWithReturnValue(report); 
+            // Run contents through the processor 
+            String report = generateReport(contents, reporttype); 
+            reply = CommandLanguage.createValidReplyWithReturnValue(report); 
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        reply = CommandLanguage.createInvalidReplyWithExplantion("Database unavailable, try again later"); 
+      }      
     } else if ( command.equals(Constants.GETCONTENTS_REQUEST) ) { 
       // get the contents of the timesag for the given user 
-      BasicDBObject dbo = storage.getDocumentFor(user); 
-      String contents = dbo.getString("contents"); 
-       
-      reply = CommandLanguage.createValidReplyWithReturnValue(contents); 
+
+      try {
+        BasicDBObject dbo = storage.getDocumentFor(user); 
+        
+        if(dbo == null){
+          reply = CommandLanguage.createInvalidReplyWithExplantion("Document for user not found"); 
+        }
+        else {
+          String contents = dbo.getString("contents"); 
+          if(contents.length() > Constants.MAX_DOCUMENT_SIZE) {
+            reply = CommandLanguage.createInvalidReplyWithExplantion("Document too big for report generation"); 
+          }
+          else {
+           reply = CommandLanguage.createValidReplyWithReturnValue(contents); 
+          }
+        }
+      } catch (Exception e) {
+        e.printStackTrace();
+        reply = CommandLanguage.createInvalidReplyWithExplantion("Database unavailable, try again later"); 
+      }
+      
     } else { 
       // huh?? Not a known command
       reply = CommandLanguage.createInvalidReplyWithExplantion("Unknown command received: "+ command+ "/obj="+request ); 
@@ -104,21 +141,29 @@ public class StandardServerRequestHandler implements ServerRequestHandler {
      
   } 
    
-  private void updateContentsForUserWithNewLine(String user, String newLineToAdd) { 
+  private boolean updateContentsForUserWithNewLine(String user, String newLineToAdd) { 
     // query the database for the document for this user 
     // and update the contents 
+    boolean lineAdded = true;
     BasicDBObject persistentObject = storage.getDocumentFor(user); 
     if ( persistentObject == null ) { 
       persistentObject = new BasicDBObject(); 
       persistentObject.put("user", user); 
       persistentObject.put("contents", newLineToAdd); 
+      storage.updateDocument(user, persistentObject); 
     } else { 
       String contents = persistentObject.getString("contents"); 
-      contents += "\n"+newLineToAdd; 
-      persistentObject.put("contents", contents); 
+      if((contents.length()+newLineToAdd.length()+1) > Constants.MAX_DOCUMENT_SIZE) {
+        lineAdded = false;
+      }
+      else {
+        contents += "\n"+newLineToAdd; 
+        persistentObject.put("contents", contents); 
+        // finally, write the document back into the document database 
+        storage.updateDocument(user, persistentObject); 
+      }
     } 
-    // finally, write the document back into the document database 
-    storage.updateDocument(user, persistentObject); 
+    return lineAdded;
   } 
  
   private String generateReport(String timesagContents, String reporttype) { 

@@ -46,4 +46,8 @@ public class Constants {
   public static final String DIGITALOCEAN_INSTANCE_IP = "146.185.162.241";
   public static final String COOKIE_REST_PORT = "8182"; 
  
+  // Helper limits for bounded result sets
+  public static final int MAX_LINE_SIZE = 80;
+  public static final int MAX_DOCUMENT_SIZE = 10485760; //10MB
+ 
 } 
